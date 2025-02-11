@@ -1,8 +1,8 @@
 from flask import Flask
-from config.config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from config.config import Config
 
 # Inicializando extensões
 db = SQLAlchemy()
@@ -14,10 +14,10 @@ def create_app():
 
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app)  # Permitir conexões do frontend
+    CORS(app)
 
+    # Importar Blueprints e registrar
     from flask_auth.routes import auth
-
     app.register_blueprint(auth, url_prefix="/api/auth")
 
     return app
