@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from config.config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+import os
 
 # Inicializando extensões
 db = SQLAlchemy()
@@ -15,6 +16,12 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     CORS(app)  # Permitir conexões do frontend
+
+    IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
+
+    @app.route('/uploads/<path:filename>')
+    def serve_image(filename):
+        return send_from_directory(IMAGE_FOLDER, filename)
 
     from flask_auth.routes import auth
     from controllers.post_controller import post_controller
