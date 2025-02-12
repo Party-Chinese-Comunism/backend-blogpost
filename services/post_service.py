@@ -2,6 +2,7 @@ import os
 from werkzeug.utils import secure_filename
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
+from repositories.user_repository import UserRepository
 
 UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -50,7 +51,7 @@ class PostService:
     
     @staticmethod
     def get_all_posts():
-        """ Retorna todos os posts formatados para JSON, incluindo comentários e imagem """
+        """ Retorna todos os posts formatados para JSON, incluindo autor, comentários e imagem """
         posts = PostRepository.get_all_posts()
         return [
             {
@@ -58,15 +59,17 @@ class PostService:
                 "title": post.title,
                 "description": post.description,
                 "user_id": post.user_id,
-                "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,
+                "author": UserRepository.get_username_by_id(post.user_id),
+                "image_url": f"http://127.0.0.1:5000{post.image_url}" if post.image_url else None,
                 "comments": [
                     {
                         "id": comment.id,
                         "content": comment.content,
                         "user_id": comment.user_id,
+                        "username": UserRepository.get_username_by_id(comment.user_id),
                         "post_id": comment.post_id
                     }
-                    for comment in CommentRepository.get_comments_by_post(post.id)  # 🔹 Adicionando os comentários do post
+                    for comment in CommentRepository.get_comments_by_post(post.id)
                 ]
             }
             for post in posts
@@ -74,7 +77,7 @@ class PostService:
     
     @staticmethod
     def get_posts_by_user(user_id):
-        """ Retorna todos os posts de um usuário logado """
+        """ Retorna todos os posts do usuário logado """
         posts = PostRepository.get_posts_by_user(user_id)
         return [
             {
@@ -82,12 +85,14 @@ class PostService:
                 "title": post.title,
                 "description": post.description,
                 "user_id": post.user_id,
+                "author": UserRepository.get_username_by_id(post.user_id),
                 "image_url": f"http://127.0.0.1:5000{post.image_url}" if post.image_url else None,
                 "comments": [
                     {
                         "id": comment.id,
                         "content": comment.content,
                         "user_id": comment.user_id,
+                        "username": UserRepository.get_username_by_id(comment.user_id),
                         "post_id": comment.post_id
                     }
                     for comment in CommentRepository.get_comments_by_post(post.id)
