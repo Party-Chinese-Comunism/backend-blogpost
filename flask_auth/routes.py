@@ -14,6 +14,9 @@ def register():
 
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"error": "Email já registrado"}), 400
+    
+    if User.query.filter_by(username=data["username"]).first():
+        return jsonify({"error": "Username já registrado"}), 400
 
     new_user = User(username=data["username"], email=data["email"])
     new_user.set_password(data["password"])
@@ -34,7 +37,7 @@ def login():
     if not user or not user.check_password(data["password"]):
         return jsonify({"error": "Credenciais inválidas"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))  # Converte ID para string
     
     return jsonify({
         "access_token": access_token,
@@ -49,7 +52,11 @@ def login():
 @jwt_required()
 def protected():
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+
+    try:
+        user = User.query.get(int(current_user_id))  # Converte o ID para inteiro
+    except ValueError:
+        return jsonify({"error": "Token inválido"}), 400  # Caso o token não contenha um ID válido
 
     if not user:
         return jsonify({"error": "Usuário não encontrado"}), 404
@@ -59,3 +66,4 @@ def protected():
         "username": user.username,
         "email": user.email
     }), 200
+
