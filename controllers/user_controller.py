@@ -1,3 +1,4 @@
+
 from flask import Blueprint, request, jsonify, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.user_service import UserService
@@ -39,3 +40,12 @@ def get_profile_image(user_id):
         return jsonify({"error": "Imagem não encontrada"}), 404
 
     return send_from_directory(os.path.abspath("uploads/profile_pictures"), f"user_{user_id}.jpg")
+
+@user_controller.route('/favorite/<int:post_id>', methods=['POST'])
+@jwt_required()
+def toogle_favorite(post_id):
+    current_user_id = get_jwt_identity()
+    
+    response, status = UserService.toggle_favorite(current_user_id, post_id)
+    return jsonify(response), status
+

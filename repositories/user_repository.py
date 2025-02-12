@@ -1,4 +1,4 @@
-from models.models import User
+from models.models import User, Post
 from app import db
 
 class UserRepository:
@@ -17,3 +17,23 @@ class UserRepository:
         user.profile_image = image_url
         db.session.commit()
         return user
+
+    @staticmethod
+    def get_user_by_id(user_id):
+        return User.query.get(user_id)
+
+    @staticmethod
+    def get_post_by_id(post_id):
+        return Post.query.get(post_id)
+
+    @staticmethod
+    def add_favorite(user, post):
+        user.favorites.append(post)
+        db.session.commit()
+
+    @staticmethod
+    def remove_favorite(user, post):
+        user.favorites.remove(post)
+        db.session.commit()
+
+

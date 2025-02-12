@@ -38,7 +38,7 @@ class PostService:
 
         image_url = None
         if image:
-            image_url = PostService.save_image(image)  # Salva a imagem
+            image_url = PostService.save_image(image)
 
         new_post = PostRepository.create_post(data["title"], data["description"], user_id, image_url)
         return {
