@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from flask_auth import db
+from app import db
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity, get_jwt
 )
-from flask_auth.models import User, RevokedToken
+from models.models import User, RevokedToken
 
 auth = Blueprint('auth', __name__)
 
@@ -66,6 +66,8 @@ def logout():
     return jsonify({"message": "Logout realizado com sucesso!"}), 200
 
 
+
+#rota apenas para teste do JWT
 @auth.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
@@ -89,3 +91,5 @@ def protected():
         "username": user.username,
         "email": user.email
     }), 200
+
+
