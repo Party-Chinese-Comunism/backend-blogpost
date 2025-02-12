@@ -20,3 +20,11 @@ def list_posts():
     """ Retorna todos os posts cadastrados """
     posts = PostService.get_all_posts()
     return jsonify(posts), 200
+
+@post_controller.route('/my-posts', methods=['GET'])
+@jwt_required()  # 🔹 Apenas usuários logados podem acessar
+def list_my_posts():
+    """ Retorna todos os posts do usuário logado """
+    current_user_id = get_jwt_identity()  # Obtém o ID do usuário autenticado
+    posts = PostService.get_posts_by_user(current_user_id)
+    return jsonify(posts), 200
