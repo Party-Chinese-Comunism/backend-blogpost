@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
 from flask_auth import db
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_auth.models import User
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity, get_jwt
+)
+from flask_auth.models import User, RevokedToken
 
 auth = Blueprint('auth', __name__)
 
@@ -48,10 +50,31 @@ def login():
         }
     }), 200
 
+@auth.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]  # Obtém o identificador único do token
+    
+    # Verifica se o token já foi revogado
+    if RevokedToken.query.filter_by(jti=jti).first():
+        return jsonify({"error": "Token já foi revogado"}), 400
+
+    revoked_token = RevokedToken(jti=jti)
+    db.session.add(revoked_token)
+    db.session.commit()
+
+    return jsonify({"message": "Logout realizado com sucesso!"}), 200
+
+
 @auth.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
     current_user_id = get_jwt_identity()
+    
+    # Verifica se o token foi revogado manualmente
+    jti = get_jwt()["jti"]
+    if RevokedToken.query.filter_by(jti=jti).first():
+        return jsonify({"error": "Token revogado. Faça login novamente."}), 401
 
     try:
         user = User.query.get(int(current_user_id))  # Converte o ID para inteiro
@@ -66,4 +89,3 @@ def protected():
         "username": user.username,
         "email": user.email
     }), 200
-
