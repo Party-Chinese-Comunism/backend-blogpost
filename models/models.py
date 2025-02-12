@@ -7,7 +7,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     
-    posts = db.relationship('Post', backref='author', lazy=True)  # ✅ Apenas esta referência é necessária
+    posts = db.relationship('Post', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='commenter', lazy=True)
 
     def set_password(self, password):

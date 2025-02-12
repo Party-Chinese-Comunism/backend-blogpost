@@ -5,12 +5,12 @@ from services.post_service import PostService
 post_controller = Blueprint('post_controller', __name__)
 
 @post_controller.route('/create', methods=['POST'])
-@jwt_required()  # Apenas usuários logados podem postar
+@jwt_required() 
 def create_post():
     """ Criação de post com ou sem imagem """
-    data = request.form  # Captura os dados do formulário
-    image = request.files.get("image")  # Captura a imagem, se houver
-    current_user_id = get_jwt_identity()  # Obtém o ID do usuário autenticado
+    data = request.form  
+    image = request.files.get("image")  
+    current_user_id = get_jwt_identity()
 
     response, status = PostService.create_post(data, current_user_id, image)
     return jsonify(response), status
