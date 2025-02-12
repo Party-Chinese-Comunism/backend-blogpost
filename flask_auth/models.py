@@ -14,6 +14,7 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+<<<<<<< HEAD
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,3 +28,10 @@ class Comment(db.Model):
     description = db.Column(db.String(256), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+=======
+    
+class RevokedToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(120), nullable=False)  # JWT ID (identificador único do token)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+>>>>>>> main
