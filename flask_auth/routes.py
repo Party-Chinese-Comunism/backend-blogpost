@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
 from flask_auth import db
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_auth.models import User
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity, get_jwt
+)
+from flask_auth.models import User, RevokedToken
 
 auth = Blueprint('auth', __name__)
 
@@ -14,6 +16,9 @@ def register():
 
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"error": "Email já registrado"}), 400
+    
+    if User.query.filter_by(username=data["username"]).first():
+        return jsonify({"error": "Username já registrado"}), 400
 
     new_user = User(username=data["username"], email=data["email"])
     new_user.set_password(data["password"])
@@ -34,7 +39,7 @@ def login():
     if not user or not user.check_password(data["password"]):
         return jsonify({"error": "Credenciais inválidas"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))  # Converte ID para string
     
     return jsonify({
         "access_token": access_token,
@@ -45,11 +50,36 @@ def login():
         }
     }), 200
 
+@auth.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]  # Obtém o identificador único do token
+    
+    # Verifica se o token já foi revogado
+    if RevokedToken.query.filter_by(jti=jti).first():
+        return jsonify({"error": "Token já foi revogado"}), 400
+
+    revoked_token = RevokedToken(jti=jti)
+    db.session.add(revoked_token)
+    db.session.commit()
+
+    return jsonify({"message": "Logout realizado com sucesso!"}), 200
+
+
 @auth.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    
+    # Verifica se o token foi revogado manualmente
+    jti = get_jwt()["jti"]
+    if RevokedToken.query.filter_by(jti=jti).first():
+        return jsonify({"error": "Token revogado. Faça login novamente."}), 401
+
+    try:
+        user = User.query.get(int(current_user_id))  # Converte o ID para inteiro
+    except ValueError:
+        return jsonify({"error": "Token inválido"}), 400  # Caso o token não contenha um ID válido
 
     if not user:
         return jsonify({"error": "Usuário não encontrado"}), 404
