@@ -71,3 +71,27 @@ class PostService:
             }
             for post in posts
         ]
+    
+    @staticmethod
+    def get_posts_by_user(user_id):
+        """ Retorna todos os posts de um usuário logado """
+        posts = PostRepository.get_posts_by_user(user_id)
+        return [
+            {
+                "id": post.id,
+                "title": post.title,
+                "description": post.description,
+                "user_id": post.user_id,
+                "image_url": f"http://127.0.0.1:5000{post.image_url}" if post.image_url else None,
+                "comments": [
+                    {
+                        "id": comment.id,
+                        "content": comment.content,
+                        "user_id": comment.user_id,
+                        "post_id": comment.post_id
+                    }
+                    for comment in CommentRepository.get_comments_by_post(post.id)
+                ]
+            }
+            for post in posts
+        ]

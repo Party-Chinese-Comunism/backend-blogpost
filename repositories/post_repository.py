@@ -18,4 +18,7 @@ class PostRepository:
     def get_all_posts():
         return Post.query.all()
 
-
+    @staticmethod
+    def get_posts_by_user(user_id):
+        """ Obtém todos os posts de um usuário específico """
+        return Post.query.filter_by(user_id=user_id).all()
