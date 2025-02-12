@@ -26,10 +26,12 @@ def create_app():
     from flask_auth.routes import auth
     from controllers.post_controller import post_controller
     from controllers.comment_controller import comment_controller
-    
+    from controllers.user_controller import user_controller
+
     app.register_blueprint(auth, url_prefix="/api/auth")
     app.register_blueprint(post_controller, url_prefix="/api/posts")
     app.register_blueprint(comment_controller, url_prefix="/api/comments")
+    app.register_blueprint(user_controller, url_prefix="/api/user")
 
     return app
 
