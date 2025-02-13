@@ -1,4 +1,5 @@
 import os
+from flask import request
 from werkzeug.utils import secure_filename
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
@@ -10,14 +11,9 @@ UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 UPLOAD_FOLDER_POSTS = "uploads/"
 
-SERVER_IP = "http://127.0.0.1:5000"
+SERVER_IP = request.host_url
 
 class PostService:
-    @staticmethod
-    def allowed_file(filename):
-        """ Verifica se a extensão da imagem é permitida """
-        return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
     @staticmethod
     def save_post_image(user_id, image):
         """ Salva a imagem do post no servidor """

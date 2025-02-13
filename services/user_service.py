@@ -10,11 +10,6 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 class UserService:
     @staticmethod
-    def allowed_file(filename):
-        """ Verifica se a extensão da imagem é permitida """
-        return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-    @staticmethod
     def save_profile_image(user_id, image):
         """ Salva a imagem no servidor e atualiza o perfil do usuário """
         if image and allowed_file(image.filename):
