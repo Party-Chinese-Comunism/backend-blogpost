@@ -21,7 +21,7 @@ class PostService:
     def save_post_image(user_id, image):
         """ Salva a imagem do post no servidor """
         if image and allowed_file(image.filename):
-            filename = generate_filename(user_id, image.filename)  # 🔹 Gera nome único
+            filename = generate_filename(user_id, image.filename)  #  Gera nome único
             filepath = os.path.join(UPLOAD_FOLDER_POSTS, filename)
 
             if not os.path.exists(UPLOAD_FOLDER_POSTS):
@@ -58,7 +58,7 @@ class PostService:
     
     @staticmethod
     def get_all_posts():
-        """ Retorna todos os posts formatados para JSON, incluindo autor, comentários e imagem """
+        """ Retorna todos os posts formatados para JSON, incluindo autor, imagem do autor, comentários e imagem do post """
         posts = PostRepository.get_all_posts()
         return [
             {
@@ -67,13 +67,17 @@ class PostService:
                 "description": post.description,
                 "user_id": post.user_id,
                 "author": UserRepository.get_username_by_id(post.user_id),
-                "image_url": f"http://127.0.0.1:5000{post.image_url}" if post.image_url else None,
+                "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
+                    if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
+                "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
                 "comments": [
                     {
                         "id": comment.id,
                         "content": comment.content,
                         "user_id": comment.user_id,
                         "username": UserRepository.get_username_by_id(comment.user_id),
+                        "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
+                            if UserRepository.get_user_profile_image(comment.user_id) else None,  # Imagem do usuário que comentou
                         "post_id": comment.post_id
                     }
                     for comment in CommentRepository.get_comments_by_post(post.id)
@@ -84,7 +88,7 @@ class PostService:
     
     @staticmethod
     def get_posts_by_user(user_id):
-        """ Retorna todos os posts do usuário logado """
+        """ Retorna todos os posts do usuário logado, incluindo imagem do autor e comentários """
         posts = PostRepository.get_posts_by_user(user_id)
         return [
             {
@@ -93,13 +97,17 @@ class PostService:
                 "description": post.description,
                 "user_id": post.user_id,
                 "author": UserRepository.get_username_by_id(post.user_id),
-                "image_url": f"http://127.0.0.1:5000{post.image_url}" if post.image_url else None,
+                "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
+                    if UserRepository.get_user_profile_image(post.user_id) else None,  # 🔹 Retorna a imagem do autor
+                "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # 🔹 Retorna a imagem do post
                 "comments": [
                     {
                         "id": comment.id,
                         "content": comment.content,
                         "user_id": comment.user_id,
                         "username": UserRepository.get_username_by_id(comment.user_id),
+                        "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
+                            if UserRepository.get_user_profile_image(comment.user_id) else None,  # 🔹 Imagem do usuário que comentou
                         "post_id": comment.post_id
                     }
                     for comment in CommentRepository.get_comments_by_post(post.id)
