@@ -1,7 +1,9 @@
 import os
 from werkzeug.utils import secure_filename
+from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
 from utils.file_utils import allowed_file, generate_filename
+from flask import request
 
 UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -61,3 +63,34 @@ class UserService:
         UserRepository.add_like(user, comment)
         
         return {"message": "Comment added to favorite"}, 200
+    
+    @staticmethod
+    def list_favorites(user_id):
+
+        user = UserRepository.get_user_by_id(user_id)
+
+        if not user:
+            return {"error": "User not find"}, 400
+       
+        favorites = UserRepository.get_favorite_posts_by_user(user)
+        
+        return [
+            {
+                "id": fav.id,
+                "title": fav.title,
+                "description": fav.description,
+                "user_id": fav.user_id,
+                "image_url": f"{request.host_url}{fav.image_url}" if fav.image_url else None,
+                "comments": [
+                    {
+                        "id": comment.id,
+                        "content": comment.content,
+                        "user_id": comment.user_id,
+                        "username": UserRepository.get_username_by_id(comment.user_id),
+                        "post_id": comment.post_id
+                    }
+                    for comment in CommentRepository.get_comments_by_post(fav.id)
+                ]
+            }
+            for fav in favorites
+        ], 200

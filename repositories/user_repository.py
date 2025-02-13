@@ -51,3 +51,6 @@ class UserRepository:
         db.session.commit()
 
 
+    def get_favorite_posts_by_user(user):
+        return user.favorites
+        
