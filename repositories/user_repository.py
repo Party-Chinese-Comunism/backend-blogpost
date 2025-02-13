@@ -22,7 +22,7 @@ class UserRepository:
     def get_user_by_id(user_id):
         return User.query.get(user_id)
 
-    @staticmethod
+    @staticmethod 
     def get_post_by_id(post_id):
         return Post.query.get(post_id)
 
