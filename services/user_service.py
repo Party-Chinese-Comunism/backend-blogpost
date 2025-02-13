@@ -58,11 +58,11 @@ class UserService:
         
         if comment in user.likes:
             UserRepository.remove_like(user, comment)
-            return {"message": "Comment remove from favorite. "}, 200
+            return {"message": "Like Removed. "}, 200
         
         UserRepository.add_like(user, comment)
         
-        return {"message": "Comment added to favorite"}, 200
+        return {"message": "Like Added"}, 200
     
     @staticmethod
     def list_favorites(user_id):
@@ -87,7 +87,8 @@ class UserService:
                         "content": comment.content,
                         "user_id": comment.user_id,
                         "username": UserRepository.get_username_by_id(comment.user_id),
-                        "post_id": comment.post_id
+                        "post_id": comment.post_id,
+                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, user_id) if user_id else False
                     }
                     for comment in CommentRepository.get_comments_by_post(fav.id)
                 ]

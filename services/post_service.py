@@ -4,6 +4,7 @@ from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
 from utils.file_utils import allowed_file, generate_filename
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -57,9 +58,55 @@ class PostService:
         }, 201
     
     @staticmethod
+    @jwt_required(optional=True)  # Permite que a requisição seja feita com ou sem autenticação
     def get_all_posts():
         """ Retorna todos os posts formatados para JSON, incluindo autor, imagem do autor, comentários e imagem do post """
         posts = PostRepository.get_all_posts()
+        
+        # Obtém o ID do usuário autenticado, se existir
+        current_user_id = get_jwt_identity()
+        print(current_user_id)
+        return [
+            {
+                "id": post.id,
+                "title": post.title,
+                "description": post.description,
+                "user_id": post.user_id,
+                "author": UserRepository.get_username_by_id(post.user_id),
+                "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
+                    if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
+                "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
+                
+                #  Verifica se o usuário autenticado favoritou esse post
+                "favorited_by_user": PostRepository.is_favorited_by_user(post.id, current_user_id) if current_user_id else False,
+
+                "comments": [
+                    {
+                        "id": comment.id,
+                        "content": comment.content,
+                        "user_id": comment.user_id,
+                        "username": UserRepository.get_username_by_id(comment.user_id),
+                        "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
+                            if UserRepository.get_user_profile_image(comment.user_id) else None,  # Imagem do usuário que comentou
+                        "post_id": comment.post_id,
+                        
+                        # Verifica se o usuário autenticado curtiu esse comentário
+                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id) if current_user_id else False,
+                    }
+                    for comment in CommentRepository.get_comments_by_post(post.id)
+                ]
+            }
+            for post in posts
+        ]
+    
+    @staticmethod
+    @jwt_required()
+    def get_posts_by_user(user_id):
+        """ Retorna todos os posts do usuário logado, incluindo imagem do autor e comentários """
+        
+        posts = PostRepository.get_posts_by_user(user_id)
+        current_user_id = get_jwt_identity()  # Obtém o ID do usuário autenticado
+
         return [
             {
                 "id": post.id,
@@ -78,37 +125,9 @@ class PostService:
                         "username": UserRepository.get_username_by_id(comment.user_id),
                         "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
                             if UserRepository.get_user_profile_image(comment.user_id) else None,  # Imagem do usuário que comentou
-                        "post_id": comment.post_id
-                    }
-                    for comment in CommentRepository.get_comments_by_post(post.id)
-                ]
-            }
-            for post in posts
-        ]
-    
-    @staticmethod
-    def get_posts_by_user(user_id):
-        """ Retorna todos os posts do usuário logado, incluindo imagem do autor e comentários """
-        posts = PostRepository.get_posts_by_user(user_id)
-        return [
-            {
-                "id": post.id,
-                "title": post.title,
-                "description": post.description,
-                "user_id": post.user_id,
-                "author": UserRepository.get_username_by_id(post.user_id),
-                "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
-                    if UserRepository.get_user_profile_image(post.user_id) else None,  # 🔹 Retorna a imagem do autor
-                "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # 🔹 Retorna a imagem do post
-                "comments": [
-                    {
-                        "id": comment.id,
-                        "content": comment.content,
-                        "user_id": comment.user_id,
-                        "username": UserRepository.get_username_by_id(comment.user_id),
-                        "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
-                            if UserRepository.get_user_profile_image(comment.user_id) else None,  # 🔹 Imagem do usuário que comentou
-                        "post_id": comment.post_id
+                        "post_id": comment.post_id,
+                                           
+                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id)  # Novo campo: Verifica se o usuário autenticado curtiu esse comentário
                     }
                     for comment in CommentRepository.get_comments_by_post(post.id)
                 ]
