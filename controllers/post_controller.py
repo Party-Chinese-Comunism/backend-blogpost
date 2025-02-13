@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.post_service import PostService
+from repositories.post_repository import PostRepository
 
 post_controller = Blueprint('post_controller', __name__)
 
@@ -28,3 +29,23 @@ def list_my_posts():
     current_user_id = get_jwt_identity()  # Obtém o ID do usuário autenticado
     posts = PostService.get_posts_by_user(current_user_id)
     return jsonify(posts), 200
+
+@post_controller.route('/upload-post-image', methods=['POST'])
+@jwt_required()
+def upload_post_image():
+    """ Upload de imagem para um post """
+    current_user_id = get_jwt_identity()
+    image = request.files.get("image")
+
+    if not image:
+        return jsonify({"error": "Nenhuma imagem enviada"}), 400
+
+    image_url = PostService.save_post_image(current_user_id, image)
+
+    if not image_url:
+        return jsonify({"error": "Formato de arquivo inválido"}), 400
+
+    return jsonify({
+        "message": "Imagem do post enviada com sucesso!",
+        "image_url": f"http://127.0.0.1:5000{image_url}"
+    }), 200

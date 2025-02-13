@@ -3,9 +3,11 @@ from werkzeug.utils import secure_filename
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
+from utils.file_utils import allowed_file, generate_filename
 
 UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+UPLOAD_FOLDER_POSTS = "uploads/"
 
 SERVER_IP = "http://127.0.0.1:5000"
 
@@ -16,13 +18,18 @@ class PostService:
         return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
     @staticmethod
-    def save_image(image):
-        """ Salva a imagem no servidor e retorna a URL """
-        if image and PostService.allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
+    def save_post_image(user_id, image):
+        """ Salva a imagem do post no servidor """
+        if image and allowed_file(image.filename):
+            filename = generate_filename(user_id, image.filename)  # 🔹 Gera nome único
+            filepath = os.path.join(UPLOAD_FOLDER_POSTS, filename)
+
+            if not os.path.exists(UPLOAD_FOLDER_POSTS):
+                os.makedirs(UPLOAD_FOLDER_POSTS)
+
             image.save(filepath)
-            return f"/uploads/{filename}"  # 🔹 URL da imagem salva
+            return f"/uploads/{filename}"  # Retorna o caminho da imagem
+
         return None
 
     @staticmethod
@@ -38,7 +45,7 @@ class PostService:
 
         image_url = None
         if image:
-            image_url = PostService.save_image(image)
+            image_url = PostService.save_post_image(user_id, image)  
 
         new_post = PostRepository.create_post(data["title"], data["description"], user_id, image_url)
         return {
