@@ -104,7 +104,7 @@ class UserService:
         if follower == followed:
             return {"error": "Você não pode seguir a si mesmo"}, 400
         
-        if UserRepository.is_follwing(follower, followed):
+        if UserRepository.is_following(follower, followed):
             UserRepository.unfollow_user(follower, followed)
             return {"message": f"Você deixou de seguir {followed.username}"}, 200
         else: 

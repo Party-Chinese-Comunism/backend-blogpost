@@ -1,4 +1,4 @@
-from models.models import User, Post, Comment
+from models.models import User, Post, Comment, followers
 from app import db
 
 class UserRepository:
@@ -67,7 +67,7 @@ class UserRepository:
             db.session.commit()
 
     @staticmethod
-    def is_follwing(follower, followed):
+    def is_following(follower, followed):
         return follower.following.filter(followers.c.followed_id == followed.id).count() > 0
 
     @staticmethod
