@@ -54,3 +54,8 @@ class UserRepository:
     def get_favorite_posts_by_user(user):
         return user.favorites
         
+    @staticmethod
+    def get_user_profile_image(user_id):
+        """ Retorna a URL da imagem do perfil do usuário """
+        user = User.query.get(user_id)
+        return user.profile_image if user and user.profile_image else None

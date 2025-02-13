@@ -39,14 +39,9 @@ def login():
     if not user or not user.check_password(data["password"]):
         return jsonify({"error": "Credenciais inválidas"}), 401
 
-    access_token = create_access_token(identity=str(user.id))  # Expira em 30 minutos
-    refresh_token = create_refresh_token(identity=str(user.id))  # Expira em 7 dias
-
-    # Salva o Refresh Token no banco
-    jti = get_jwt()["jti"]  # Obtém o identificador único do token
-    new_refresh_token = RefreshToken(user_id=user.id, jti=jti)
-    db.session.add(new_refresh_token)
-    db.session.commit()
+    # Correção: Criando os tokens corretamente
+    access_token = create_access_token(identity=str(user.id))  # Access Token (30 min)
+    refresh_token = create_refresh_token(identity=str(user.id))  # Refresh Token (7 dias)
 
     return jsonify({
         "access_token": access_token,

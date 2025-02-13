@@ -3,13 +3,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 
 favorites = db.Table('favorites', 
-    db.Column('user.id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('post.id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
 )
 
 likes = db.Table('likes',
-    db.Column('user.id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('comment.id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
 )
 
 class User(db.Model):
