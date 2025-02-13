@@ -5,6 +5,8 @@ from repositories.post_repository import PostRepository
 
 post_controller = Blueprint('post_controller', __name__)
 
+SERVER_IP = request.host_url
+
 @post_controller.route('/create', methods=['POST'])
 @jwt_required() 
 def create_post():
@@ -47,5 +49,5 @@ def upload_post_image():
 
     return jsonify({
         "message": "Imagem do post enviada com sucesso!",
-        "image_url": f"http://127.0.0.1:5000{image_url}"
+        "image_url": f"{SERVER_IP}{image_url}"
     }), 200
