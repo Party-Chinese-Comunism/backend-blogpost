@@ -1,8 +1,9 @@
 import os
 from werkzeug.utils import secure_filename
 from repositories.user_repository import UserRepository
+from utils.file_utils import allowed_file, generate_filename
 
-UPLOAD_FOLDER = "uploads/profile_pictures/"
+UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 class UserService:
@@ -14,14 +15,14 @@ class UserService:
     @staticmethod
     def save_profile_image(user_id, image):
         """ Salva a imagem no servidor e atualiza o perfil do usuário """
-        if image and UserService.allowed_file(image.filename):
-            filename = secure_filename(f"user_{user_id}.{image.filename.rsplit('.', 1)[1].lower()}")  # Nome único
+        if image and allowed_file(image.filename):
+            filename = generate_filename(user_id, image.filename)  # 🔹 Gera nome único
             filepath = os.path.join(UPLOAD_FOLDER, filename)
 
             if not os.path.exists(UPLOAD_FOLDER):
-                os.makedirs(UPLOAD_FOLDER)  # Criar diretório se não existir
+                os.makedirs(UPLOAD_FOLDER)
 
-            image.save(filepath)
+            image.save(filepath)  # 🔹 Salva a imagem no diretório
             image_url = f"/uploads/profile_pictures/{filename}"
 
             updated_user = UserRepository.update_profile_image(user_id, image_url)

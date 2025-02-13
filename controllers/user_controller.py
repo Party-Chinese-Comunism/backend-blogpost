@@ -35,11 +35,11 @@ def get_profile_image(user_id):
     if not user:
         return jsonify({"error": "Usuário não encontrado"}), 404
 
-    image_path = os.path.join("uploads/profile_pictures", f"user_{user_id}.jpg")
+    image_path = os.path.join("uploads/", f"user_{user_id}.jpg")
     if not os.path.exists(image_path):
         return jsonify({"error": "Imagem não encontrada"}), 404
 
-    return send_from_directory(os.path.abspath("uploads/profile_pictures"), f"user_{user_id}.jpg")
+    return send_from_directory(os.path.abspath("uploads/"), f"user_{user_id}.jpg")
 
 @user_controller.route('/favorite/<int:post_id>', methods=['POST'])
 @jwt_required()
