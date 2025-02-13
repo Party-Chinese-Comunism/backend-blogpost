@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from flask_jwt_extended import (
-    create_access_token, jwt_required, get_jwt_identity, get_jwt
+    create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
 )
-from models.models import User, RevokedToken
+from models.models import User, RevokedToken, RefreshToken
 
 auth = Blueprint('auth', __name__)
 
@@ -39,10 +39,13 @@ def login():
     if not user or not user.check_password(data["password"]):
         return jsonify({"error": "Credenciais inválidas"}), 401
 
-    access_token = create_access_token(identity=str(user.id))  # Converte ID para string
-    
+    # Correção: Criando os tokens corretamente
+    access_token = create_access_token(identity=str(user.id))  # Access Token (30 min)
+    refresh_token = create_refresh_token(identity=str(user.id))  # Refresh Token (7 dias)
+
     return jsonify({
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "user": {
             "id": user.id,
             "username": user.username,
@@ -51,23 +54,38 @@ def login():
     }), 200
 
 @auth.route('/logout', methods=['POST'])
-@jwt_required()
+@jwt_required(refresh=True)  # Exige um Refresh Token válido
 def logout():
+    """ Revoga o Refresh Token ao sair """
     jti = get_jwt()["jti"]  # Obtém o identificador único do token
-    
-    # Verifica se o token já foi revogado
-    if RevokedToken.query.filter_by(jti=jti).first():
-        return jsonify({"error": "Token já foi revogado"}), 400
+    stored_token = RefreshToken.query.filter_by(jti=jti).first()
 
-    revoked_token = RevokedToken(jti=jti)
-    db.session.add(revoked_token)
-    db.session.commit()
+    if stored_token:
+        stored_token.revoked = True  # Revoga o token
+        db.session.commit()
 
     return jsonify({"message": "Logout realizado com sucesso!"}), 200
 
 
+@auth.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    """ Gera um novo token de acesso usando o Refresh Token """
+    current_user_id = get_jwt_identity()
+    jti = get_jwt()["jti"]  # Obtém o identificador único do token
 
-#rota apenas para teste do JWT
+    # Verifica se o Refresh Token está no banco e não foi revogado
+    stored_token = RefreshToken.query.filter_by(jti=jti, user_id=current_user_id).first()
+
+    if not stored_token or stored_token.revoked:
+        return jsonify({"error": "Token de refresh inválido ou revogado"}), 401
+
+    # Gera um novo Access Token
+    new_access_token = create_access_token(identity=current_user_id)
+
+    return jsonify({"access_token": new_access_token}), 200
+
+# Rota apenas para teste do JWT
 @auth.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
@@ -91,5 +109,3 @@ def protected():
         "username": user.username,
         "email": user.email
     }), 200
-
-

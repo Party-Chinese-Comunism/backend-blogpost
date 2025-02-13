@@ -22,7 +22,7 @@ class UserRepository:
     def get_user_by_id(user_id):
         return User.query.get(user_id)
 
-    @staticmethod
+    @staticmethod 
     def get_post_by_id(post_id):
         return Post.query.get(post_id)
 
@@ -77,3 +77,8 @@ class UserRepository:
     @staticmethod
     def get_following(user):
         return user.following.all()
+      
+    def get_user_profile_image(user_id):
+        """ Retorna a URL da imagem do perfil do usuário """
+        user = User.query.get(user_id)
+        return user.profile_image if user and user.profile_image else None

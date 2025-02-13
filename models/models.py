@@ -1,14 +1,15 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timezone
 
 favorites = db.Table('favorites', 
-    db.Column('user.id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('post.id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
 )
 
 likes = db.Table('likes',
-    db.Column('user.id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('comment.id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
 )
 
 followers = db.Table('followers',
@@ -62,3 +63,10 @@ class RevokedToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(120), nullable=False)  # JWT ID (identificador único do token)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+class RefreshToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    jti = db.Column(db.String(120), nullable=False, unique=True)  # Identificador único do token
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc)) 
+    revoked = db.Column(db.Boolean, default=False)  # Se o token foi revogado

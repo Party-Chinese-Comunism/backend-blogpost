@@ -5,7 +5,7 @@ from services.comment_service import CommentService
 comment_controller = Blueprint('comment_controller', __name__)
 
 @comment_controller.route('/create', methods=['POST'])
-@jwt_required()  # ✅ Apenas usuários logados podem comentar
+@jwt_required()  #  Apenas usuários logados podem comentar
 def create_comment():
     """ Apenas usuários logados podem comentar em um post """
     data = request.get_json()

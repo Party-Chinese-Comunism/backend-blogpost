@@ -7,6 +7,8 @@ import os
 
 user_controller = Blueprint('user_controller', __name__)
 
+SERVER_IP = request.host_url
+
 @user_controller.route('/upload-profile-image', methods=['POST'])
 @jwt_required()
 def upload_profile_image():
@@ -24,7 +26,7 @@ def upload_profile_image():
 
     return jsonify({
         "message": "Imagem de perfil atualizada com sucesso!",
-        "profile_image": f"http://127.0.0.1:5000{image_url}"
+        "profile_image": f"{SERVER_IP}{image_url}"
     }), 200
 
 @user_controller.route('/profile-image/<int:user_id>', methods=['GET'])
