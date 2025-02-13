@@ -12,13 +12,13 @@ def register():
     data = request.get_json()
     
     if not data or not all(k in data for k in ("username", "email", "password")):
-        return jsonify({"error": "Dados incompletos"}), 400
+        return jsonify({"error": "Dados incompletos"}), 422
 
     if User.query.filter_by(email=data["email"]).first():
-        return jsonify({"error": "Email já registrado"}), 400
+        return jsonify({"error": "Email já registrado"}), 409
     
     if User.query.filter_by(username=data["username"]).first():
-        return jsonify({"error": "Username já registrado"}), 400
+        return jsonify({"error": "Username já registrado"}), 409
 
     new_user = User(username=data["username"], email=data["email"])
     new_user.set_password(data["password"])
