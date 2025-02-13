@@ -4,10 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
+from flask_migrate import Migrate
 
 # Inicializando extensões
 db = SQLAlchemy()
 jwt = JWTManager()
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -16,6 +18,7 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     CORS(app)  # Permitir conexões do frontend
+    migrate.init_app(app, db)
 
     IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
 
