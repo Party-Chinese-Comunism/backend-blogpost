@@ -6,6 +6,11 @@ favorites = db.Table('favorites',
     db.Column('post.id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
 )
 
+likes = db.Table('likes',
+    db.Column('user.id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('comment.id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
+)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -17,6 +22,7 @@ class User(db.Model):
     comments = db.relationship('Comment', backref='commenter', lazy=True)
 
     favorites = db.relationship('Post', secondary=favorites, backref='favorited_by', lazy=True)
+    likes = db.relationship('Comment', secondary=likes, backref='liked_by', lazy=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

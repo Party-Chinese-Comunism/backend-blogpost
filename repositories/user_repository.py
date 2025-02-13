@@ -1,4 +1,4 @@
-from models.models import User, Post
+from models.models import User, Post, Comment
 from app import db
 
 class UserRepository:
@@ -27,6 +27,10 @@ class UserRepository:
         return Post.query.get(post_id)
 
     @staticmethod
+    def get_comment_by_id(comment_id):
+        return Comment.query.get(comment_id)
+
+    @staticmethod
     def add_favorite(user, post):
         user.favorites.append(post)
         db.session.commit()
@@ -34,6 +38,16 @@ class UserRepository:
     @staticmethod
     def remove_favorite(user, post):
         user.favorites.remove(post)
+        db.session.commit()
+
+    @staticmethod
+    def add_like(user, comment):
+        user.likes.append(comment)
+        db.session.commit()
+
+    @staticmethod
+    def remove_like(user, comment):
+        user.likes.remove(comment)
         db.session.commit()
 
 

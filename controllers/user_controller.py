@@ -49,3 +49,10 @@ def toogle_favorite(post_id):
     response, status = UserService.toggle_favorite(current_user_id, post_id)
     return jsonify(response), status
 
+@user_controller.route('/like/<int:comment_id>', methods=['POST'])
+@jwt_required()
+def toogle_like(comment_id):
+    current_user_id = get_jwt_identity()
+
+    response, status = UserService.toggle_like(current_user_id, comment_id)
+    return jsonify(response), status

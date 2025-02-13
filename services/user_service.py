@@ -33,14 +33,30 @@ class UserService:
     def toggle_favorite(user_id, post_id):
         user = UserRepository.get_user_by_id(user_id)
         post = UserRepository.get_post_by_id(post_id)
-        print(user.username)
+
         if not user or not post:
             return {"error": "User or Post not find"}, 400
         
         if post in user.favorites:
             UserRepository.remove_favorite(user, post)
-            return {"message": f"Post '{post.title}' remove from favorite. "}, 200
+            return {"message": "Post remove from favorite. "}, 200
         
         UserRepository.add_favorite(user, post)
         
-        return {"message": f"Post '{post.title}' added to favorite"}, 200
+        return {"message": "Post added to favorite"}, 200
+    
+    @staticmethod
+    def toggle_like(user_id, comment_id):
+        user = UserRepository.get_user_by_id(user_id)
+        comment = UserRepository.get_comment_by_id(comment_id)
+
+        if not user or not comment:
+            return {"error": "User or comment not find"}, 400
+        
+        if comment in user.likes:
+            UserRepository.remove_like(user, comment)
+            return {"message": "Comment remove from favorite. "}, 200
+        
+        UserRepository.add_like(user, comment)
+        
+        return {"message": "Comment added to favorite"}, 200
