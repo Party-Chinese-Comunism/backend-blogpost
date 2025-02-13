@@ -90,3 +90,21 @@ class UserService:
             }
             for fav in favorites
         ], 200
+
+    def toggle_follow(follower_id, followed_id):
+        follower = UserRepository.get_user_by_id(follower_id)
+        followed = UserRepository.get_user_by_id(followed_id)
+
+        if not followed or not followed:
+            return {"error": "Usuário não encontrado"}, 404
+        if follower == followed:
+            return {"error": "Você não pode seguir a si mesmo"}, 400
+        
+        if UserRepository.is_following(follower, followed):
+            UserRepository.unfollow_user(follower, followed)
+            return {"message": f"Você deixou de seguir {followed.username}"}, 200
+        else: 
+            UserRepository.follow_user(follower, followed)
+            return {"message": f"Agora você está seguindo {followed.username}"}, 200
+        
+    

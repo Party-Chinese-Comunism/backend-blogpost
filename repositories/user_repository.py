@@ -1,4 +1,4 @@
-from models.models import User, Post, Comment
+from models.models import User, Post, Comment, followers
 from app import db
 
 class UserRepository:
@@ -55,6 +55,29 @@ class UserRepository:
         return user.favorites
         
     @staticmethod
+    def follow_user(follower, followed):
+        if not UserRepository.is_following(follower, followed):
+            follower.following.append(followed)
+            db.session.commit()
+
+    @staticmethod
+    def unfollow_user(follower, followed):
+        if UserRepository.is_following(follower, followed):
+            follower.following.remove(followed)
+            db.session.commit()
+
+    @staticmethod
+    def is_following(follower, followed):
+        return follower.following.filter(followers.c.followed_id == followed.id).count() > 0
+
+    @staticmethod
+    def get_followers(user):
+        return user.followers.all()
+
+    @staticmethod
+    def get_following(user):
+        return user.following.all()
+      
     def get_user_profile_image(user_id):
         """ Retorna a URL da imagem do perfil do usuário """
         user = User.query.get(user_id)

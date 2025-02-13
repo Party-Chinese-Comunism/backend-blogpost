@@ -66,3 +66,11 @@ def list_favorites():
     
     response, status = UserService.list_favorites(current_user_id)
     return jsonify(response), status
+
+@user_controller.route('/follow/<int:user_id>', methods=['POST'])
+@jwt_required()
+def toggle_follow(user_id):
+    current_user_id = get_jwt_identity()
+
+    response, status = UserService.toggle_follow(current_user_id, user_id)
+    return jsonify(response), status
