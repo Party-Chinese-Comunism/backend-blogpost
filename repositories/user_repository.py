@@ -54,3 +54,26 @@ class UserRepository:
     def get_favorite_posts_by_user(user):
         return user.favorites
         
+    @staticmethod
+    def follow_user(follower, followed):
+        if not UserRepository.is_following(follower, followed):
+            follower.following.append(followed)
+            db.session.commit()
+
+    @staticmethod
+    def unfollow_user(follower, followed):
+        if UserRepository.is_following(follower, followed):
+            follower.following.remove(followed)
+            db.session.commit()
+
+    @staticmethod
+    def is_follwing(follower, followed):
+        return follower.following.filter(followers.c.followed_id == followed.id).count() > 0
+
+    @staticmethod
+    def get_followers(user):
+        return user.followers.all()
+
+    @staticmethod
+    def get_following(user):
+        return user.following.all()
