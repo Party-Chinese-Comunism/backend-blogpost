@@ -1,13 +1,12 @@
-
-from flask import Blueprint, request, jsonify, send_from_directory
-from flask_jwt_extended import jwt_required, get_jwt_identity
+import os, socket
 from services.user_service import UserService
 from repositories.user_repository import UserRepository
-import os
+from flask import Blueprint, request, jsonify, send_from_directory
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from utils.file_utils import  SERVER_IP
 
 user_controller = Blueprint('user_controller', __name__)
 
-SERVER_IP = "http://127.0.0.1:5000"
 
 @user_controller.route('/upload-profile-image', methods=['POST'])
 @jwt_required()
