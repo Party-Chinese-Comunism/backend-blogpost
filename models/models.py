@@ -53,11 +53,18 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     image_url = db.Column(db.String(256), nullable=True)
 
+    def favorites_count(self):
+        return len(self.favorited_by)
+
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(256), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+    def likes_count(self):
+        return len(self.liked_by)
     
 class RevokedToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
