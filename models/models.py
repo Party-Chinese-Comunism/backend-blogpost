@@ -52,6 +52,8 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     image_url = db.Column(db.String(256), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    update_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def favorites_count(self):
         return len(self.favorited_by)
