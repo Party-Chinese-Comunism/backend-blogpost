@@ -73,7 +73,7 @@ class UserRepository:
     @staticmethod
     def get_followers(user):
         return user.followers.all()
-
+    
     @staticmethod
     def get_following(user):
         return user.following.all()

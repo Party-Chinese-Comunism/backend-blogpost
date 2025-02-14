@@ -11,7 +11,7 @@ UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 UPLOAD_FOLDER_POSTS = "uploads/"
 
-SERVER_IP = request.host_url
+SERVER_IP = "http://localhost:5000"
 
 class PostService:
     @staticmethod
