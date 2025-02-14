@@ -16,7 +16,7 @@ class PostRepository:
     
     @staticmethod
     def get_all_posts():
-        return Post.query.all()
+        return Post.query.order_by(Post.created_at.desc()).all()
 
     @staticmethod
     def get_posts_by_user(user_id):
@@ -33,3 +33,4 @@ class PostRepository:
             favorites.c.user_id == user_id, 
             favorites.c.post_id == post_id
         ).first() is not None
+    
