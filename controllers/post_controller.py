@@ -5,7 +5,7 @@ from repositories.post_repository import PostRepository
 
 post_controller = Blueprint('post_controller', __name__)
 
-SERVER_IP = request.host_url
+SERVER_IP = "http://127.0.0.1:5000"
 
 @post_controller.route('/create', methods=['POST'])
 @jwt_required() 

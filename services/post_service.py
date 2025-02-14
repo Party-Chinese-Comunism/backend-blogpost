@@ -11,7 +11,7 @@ UPLOAD_FOLDER = "uploads/"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 UPLOAD_FOLDER_POSTS = "uploads/"
 
-SERVER_IP = request.host_url
+SERVER_IP = "http://127.0.0.1:5000"
 
 class PostService:
     @staticmethod
@@ -72,7 +72,7 @@ class PostService:
                 "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
                     if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
                 "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
-                
+                "favorite_number": post.favorites_count(),
                 #  Verifica se o usuário autenticado favoritou esse post
                 "favorited_by_user": PostRepository.is_favorited_by_user(post.id, current_user_id) if current_user_id else False,
 
@@ -85,7 +85,7 @@ class PostService:
                         "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
                             if UserRepository.get_user_profile_image(comment.user_id) else None,  # Imagem do usuário que comentou
                         "post_id": comment.post_id,
-                        
+                        "like_number": comment.likes_count(),
                         # Verifica se o usuário autenticado curtiu esse comentário
                         "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id) if current_user_id else False,
                     }
