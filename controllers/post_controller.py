@@ -1,11 +1,11 @@
+import socket
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.post_service import PostService
 from repositories.post_repository import PostRepository
+from utils.file_utils import  SERVER_IP
 
 post_controller = Blueprint('post_controller', __name__)
-
-SERVER_IP = request.host_url
 
 @post_controller.route('/create', methods=['POST'])
 @jwt_required() 

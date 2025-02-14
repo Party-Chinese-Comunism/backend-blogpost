@@ -1,17 +1,12 @@
-import os
-from flask import request
+import os, socket
 from werkzeug.utils import secure_filename
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
-from utils.file_utils import allowed_file, generate_filename
+from utils.file_utils import *
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 UPLOAD_FOLDER = "uploads/"
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-UPLOAD_FOLDER_POSTS = "uploads/"
-
-SERVER_IP = request.host_url
 
 class PostService:
     @staticmethod
@@ -19,10 +14,10 @@ class PostService:
         """ Salva a imagem do post no servidor """
         if image and allowed_file(image.filename):
             filename = generate_filename(user_id, image.filename)  #  Gera nome único
-            filepath = os.path.join(UPLOAD_FOLDER_POSTS, filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-            if not os.path.exists(UPLOAD_FOLDER_POSTS):
-                os.makedirs(UPLOAD_FOLDER_POSTS)
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
 
             image.save(filepath)
             return f"/uploads/{filename}"  # Retorna o caminho da imagem
