@@ -75,7 +75,11 @@ class UserService:
                 "title": fav.title,
                 "description": fav.description,
                 "user_id": fav.user_id,
+                "author": UserRepository.get_username_by_id(fav.user_id),
+                "author_image": f"{request.host_url}{UserRepository.get_user_profile_image(fav.user_id)}" 
+                    if UserRepository.get_user_profile_image(fav.user_id) else None,
                 "image_url": f"{request.host_url}{fav.image_url}" if fav.image_url else None,
+                "favorite_number": fav.favorites_count(),
                 "comments": [
                     {
                         "id": comment.id,
@@ -83,10 +87,29 @@ class UserService:
                         "user_id": comment.user_id,
                         "username": UserRepository.get_username_by_id(comment.user_id),
                         "post_id": comment.post_id,
-                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, user_id) if user_id else False
+                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, user_id) if user_id else False,
+                        "like_number": comment.likes_count()
                     }
                     for comment in CommentRepository.get_comments_by_post(fav.id)
                 ]
             }
             for fav in favorites
         ], 200
+
+    def toggle_follow(follower_id, followed_id):
+        follower = UserRepository.get_user_by_id(follower_id)
+        followed = UserRepository.get_user_by_id(followed_id)
+
+        if not followed or not followed:
+            return {"error": "Usuário não encontrado"}, 404
+        if follower == followed:
+            return {"error": "Você não pode seguir a si mesmo"}, 400
+        
+        if UserRepository.is_following(follower, followed):
+            UserRepository.unfollow_user(follower, followed)
+            return {"message": f"Você deixou de seguir {followed.username}"}, 200
+        else: 
+            UserRepository.follow_user(follower, followed)
+            return {"message": f"Agora você está seguindo {followed.username}"}, 200
+        
+    

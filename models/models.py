@@ -12,6 +12,11 @@ likes = db.Table('likes',
     db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
 )
 
+followers = db.Table('followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -24,6 +29,15 @@ class User(db.Model):
 
     favorites = db.relationship('Post', secondary=favorites, backref='favorited_by', lazy=True)
     likes = db.relationship('Comment', secondary=likes, backref='liked_by', lazy=True)
+
+    following = db.relationship(
+        'User',
+        secondary = followers,
+        primaryjoin = (followers.c.follower_id == id),
+        secondaryjoin = (followers.c.followed_id == id),
+        backref = db.backref('followers', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -39,11 +53,18 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     image_url = db.Column(db.String(256), nullable=True)
 
+    def favorites_count(self):
+        return len(self.favorited_by)
+
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(256), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+    def likes_count(self):
+        return len(self.liked_by)
     
 class RevokedToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
