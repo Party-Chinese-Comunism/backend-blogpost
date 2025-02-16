@@ -5,7 +5,7 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import create_app, db  # Importando corretamente o Flask app
+from app import create_app, db  
 from services.post_service import PostService 
 from repositories.post_repository import PostRepository
 from repositories.user_repository import UserRepository
@@ -24,12 +24,12 @@ def app():
 def client(app):
     return app.test_client()
 
-# Teste para criação de post sem imagem
+
 def test_create_post_without_image(app):
     data = {"title": "Test Post", "description": "This is a test post."}
     user_id = 1
     
-    with app.app_context():  # Garante que o teste roda dentro do contexto do Flask
+    with app.app_context():   
         with patch.object(PostRepository, 'create_post') as mock_create_post:
             mock_create_post.return_value = MagicMock(
                 id=1, title="Test Post", description="This is a test post.", user_id=user_id, image_url=None
@@ -42,7 +42,7 @@ def test_create_post_without_image(app):
             assert response["description"] == "This is a test post."
             assert status_code == 201
 
-# Teste para criação de post com imagem
+
 def test_create_post_with_image(app):
     data = {"title": "Test Post with Image", "description": "This post has an image."}
     user_id = 1
@@ -66,7 +66,8 @@ def test_create_post_with_image(app):
             assert response["image_url"] == "/uploads/test_image.jpg"
             assert status_code == 201
 
-#ajustar (validate_post_data) na service 
+
+
 def test_create_post_invalid_data():
     data = {"title": "", "description": ""}
     user_id = 1
@@ -90,6 +91,6 @@ def test_save_post_image(app):
             
             image_url = PostService.save_post_image(user_id, mock_image)
             
-            assert image_url.startswith("/uploads/1-")  # O nome pode mudar pelo timestamp
+            assert image_url.startswith("/uploads/1-") 
             assert image_url.endswith(".jpg")
             mock_makedirs.assert_called_once_with("uploads/", exist_ok=True)
