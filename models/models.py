@@ -52,12 +52,21 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     image_url = db.Column(db.String(256), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    update_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    def favorites_count(self):
+        return len(self.favorited_by)
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(256), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+    def likes_count(self):
+        return len(self.liked_by)
     
 class RevokedToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)

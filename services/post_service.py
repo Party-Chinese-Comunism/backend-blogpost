@@ -1,17 +1,16 @@
-import os
-from flask import request
+import os, socket
 from werkzeug.utils import secure_filename
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
-from utils.file_utils import allowed_file, generate_filename
+from utils.file_utils import *
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 UPLOAD_FOLDER = "uploads/"
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-UPLOAD_FOLDER_POSTS = "uploads/"
+
 
 SERVER_IP = "http://localhost:5000"
+
 
 class PostService:
     @staticmethod
@@ -19,10 +18,10 @@ class PostService:
         """ Salva a imagem do post no servidor """
         if image and allowed_file(image.filename):
             filename = generate_filename(user_id, image.filename)  #  Gera nome único
-            filepath = os.path.join(UPLOAD_FOLDER_POSTS, filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-            if not os.path.exists(UPLOAD_FOLDER_POSTS):
-                os.makedirs(UPLOAD_FOLDER_POSTS)
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
 
             image.save(filepath)
             return f"/uploads/{filename}"  # Retorna o caminho da imagem
@@ -72,7 +71,7 @@ class PostService:
                 "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
                     if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
                 "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
-                
+                "favorite_number": post.favorites_count(),
                 #  Verifica se o usuário autenticado favoritou esse post
                 "favorited_by_user": PostRepository.is_favorited_by_user(post.id, current_user_id) if current_user_id else False,
 
@@ -85,7 +84,7 @@ class PostService:
                         "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
                             if UserRepository.get_user_profile_image(comment.user_id) else None,  # Imagem do usuário que comentou
                         "post_id": comment.post_id,
-                        
+                        "like_number": comment.likes_count(),
                         # Verifica se o usuário autenticado curtiu esse comentário
                         "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id) if current_user_id else False,
                     }

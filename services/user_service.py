@@ -75,7 +75,11 @@ class UserService:
                 "title": fav.title,
                 "description": fav.description,
                 "user_id": fav.user_id,
+                "author": UserRepository.get_username_by_id(fav.user_id),
+                "author_image": f"{request.host_url}{UserRepository.get_user_profile_image(fav.user_id)}" 
+                    if UserRepository.get_user_profile_image(fav.user_id) else None,
                 "image_url": f"{request.host_url}{fav.image_url}" if fav.image_url else None,
+                "favorite_number": fav.favorites_count(),
                 "comments": [
                     {
                         "id": comment.id,
@@ -83,7 +87,8 @@ class UserService:
                         "user_id": comment.user_id,
                         "username": UserRepository.get_username_by_id(comment.user_id),
                         "post_id": comment.post_id,
-                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, user_id) if user_id else False
+                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, user_id) if user_id else False,
+                        "like_number": comment.likes_count()
                     }
                     for comment in CommentRepository.get_comments_by_post(fav.id)
                 ]
