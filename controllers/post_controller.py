@@ -8,6 +8,8 @@ from utils.file_utils import  SERVER_IP
 post_controller = Blueprint('post_controller', __name__)
 
 
+SERVER_IP = "http://localhost:5000"
+
 @post_controller.route('/create', methods=['POST'])
 @jwt_required() 
 def create_post():

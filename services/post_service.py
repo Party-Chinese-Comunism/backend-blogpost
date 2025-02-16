@@ -9,6 +9,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 UPLOAD_FOLDER = "uploads/"
 
 
+SERVER_IP = "http://localhost:5000"
+
+
 class PostService:
     @staticmethod
     def save_post_image(user_id, image):

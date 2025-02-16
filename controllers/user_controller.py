@@ -1,11 +1,13 @@
 import os, socket
 from services.user_service import UserService
 from repositories.user_repository import UserRepository
+
 from flask import Blueprint, request, jsonify, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils.file_utils import  SERVER_IP
 
 user_controller = Blueprint('user_controller', __name__)
+
 
 
 @user_controller.route('/upload-profile-image', methods=['POST'])
@@ -72,4 +74,19 @@ def toggle_follow(user_id):
     current_user_id = get_jwt_identity()
 
     response, status = UserService.toggle_follow(current_user_id, user_id)
+    return jsonify(response), status
+
+@user_controller.route("/followers", methods=["GET"])
+@jwt_required()
+def get_followers():  
+    current_user_id = get_jwt_identity()
+
+    response, status = UserService.get_followers(current_user_id)
+    return jsonify(response), status
+
+@user_controller.route("/following", methods=["GET"])
+@jwt_required()
+def get_followin():
+    current_user_id = get_jwt_identity()
+    response, status = UserService.get_following(current_user_id)
     return jsonify(response), status

@@ -113,3 +113,24 @@ class UserService:
             return {"message": f"Agora você está seguindo {followed.username}"}, 200
         
     
+
+    @staticmethod
+    def get_followers(user_id):
+        user = UserRepository.get_user_by_id(user_id)
+        if not user:
+            return {"error": "Usuário não encontrado"}, 404
+        
+        followers = UserRepository.get_followers(user)
+        return {"followers": [follower.username for follower in followers]}, 200
+    
+
+
+
+    @staticmethod
+    def get_following(user_id):
+        user = UserRepository.get_user_by_id(user_id)
+        if not user:
+            return {"error": "Usuário não encontrado"}, 404
+        
+        following = UserRepository.get_following(user)  
+        return {"following": [followed.username for followed in following]}, 200
