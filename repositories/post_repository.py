@@ -1,10 +1,10 @@
 from app import db
-from models.models import Post, favorites
+from models.models import Post, favorites, Comment
 
 class PostRepository:
     @staticmethod
     def create_post(title, description, user_id, image_url=None):
-        """ Cria um novo post e salva no banco de dados """
+        """ Cria um novfunco post e salva no banco de dados """
         new_post = Post(title=title, description=description, user_id=user_id, image_url=image_url)
         db.session.add(new_post)
         db.session.commit()
@@ -16,7 +16,16 @@ class PostRepository:
     
     @staticmethod
     def get_all_posts():
-        return Post.query.order_by(Post.created_at.desc()).all()
+        return (
+            db.session.query(
+                Post,
+                db.func.count(Comment.id).label("comment_count")
+            )
+            .outerjoin(Comment, Post.id == Comment.post_id)
+            .group_by(Post.id)
+            .order_by(Post.created_at.desc())
+            .all()
+        )
 
     @staticmethod
     def get_posts_by_user(user_id):
