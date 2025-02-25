@@ -1,5 +1,6 @@
 from repositories.comment_repository import CommentRepository
 from repositories.post_repository import PostRepository
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 class CommentService:
     @staticmethod
@@ -29,15 +30,22 @@ class CommentService:
         }, 201
 
     @staticmethod
+    @jwt_required(optional=True)
     def get_comments_by_post(post_id):
+
+        current_user_id = get_jwt_identity()
+
         """ Retorna todos os comentários de um post específico """
         comments = CommentRepository.get_comments_by_post(post_id)
+        
         return [
             {
                 "id": comment.id,
                 "content": comment.content,
                 "post_id": comment.post_id,
-                "user_id": comment.user_id
+                "user_id": comment.user_id,
+                "like_number": comment.likes_count(),
+                "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id) if current_user_id else False
             }
             for comment in comments
         ]
