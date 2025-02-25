@@ -1,5 +1,6 @@
 from repositories.comment_repository import CommentRepository
 from repositories.post_repository import PostRepository
+from repositories.user_repository import UserRepository
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 class CommentService:
@@ -45,7 +46,9 @@ class CommentService:
                 "post_id": comment.post_id,
                 "user_id": comment.user_id,
                 "like_number": comment.likes_count(),
-                "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id) if current_user_id else False
+                "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id) if current_user_id else False,
+                "username": UserRepository.get_username_by_id(comment.user_id),
+                "user_image":UserRepository.get_user_profile_image(comment.user_id)
             }
             for comment in comments
         ]
