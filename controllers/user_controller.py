@@ -90,3 +90,9 @@ def get_followin():
     current_user_id = get_jwt_identity()
     response, status = UserService.get_following(current_user_id)
     return jsonify(response), status
+
+@user_controller.route("/get-user-by-id/<int:user_id>", methods=["GET"])
+def get_user_by_id(user_id):
+    
+    response, status = UserService.get_user_by_id(user_id)
+    return jsonify(response), status
