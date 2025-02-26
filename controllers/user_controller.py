@@ -91,6 +91,11 @@ def get_followin():
     response, status = UserService.get_following(current_user_id)
     return jsonify(response), status
 
+@user_controller.route("/search-users-by-username/<string:name>", methods=["GET"])
+def search_users(name):
+    
+    response, status = UserService.search_users(name)
+    
 @user_controller.route("/get-user-by-id/<int:user_id>", methods=["GET"])
 def get_user_by_id(user_id):
     

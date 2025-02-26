@@ -79,19 +79,7 @@ class UserService:
                 "author_image": f"{request.host_url}{UserRepository.get_user_profile_image(fav.user_id)}" 
                     if UserRepository.get_user_profile_image(fav.user_id) else None,
                 "image_url": f"{request.host_url}{fav.image_url}" if fav.image_url else None,
-                "favorite_number": fav.favorites_count(),
-                "comments": [
-                    {
-                        "id": comment.id,
-                        "content": comment.content,
-                        "user_id": comment.user_id,
-                        "username": UserRepository.get_username_by_id(comment.user_id),
-                        "post_id": comment.post_id,
-                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, user_id) if user_id else False,
-                        "like_number": comment.likes_count()
-                    }
-                    for comment in CommentRepository.get_comments_by_post(fav.id)
-                ]
+                "favorite_number": fav.favorites_count()
             }
             for fav in favorites
         ], 200
@@ -111,8 +99,6 @@ class UserService:
         else: 
             UserRepository.follow_user(follower, followed)
             return {"message": f"Agora você está seguindo {followed.username}"}, 200
-        
-    
 
     @staticmethod
     def get_followers(user_id):
@@ -122,9 +108,6 @@ class UserService:
         
         followers = UserRepository.get_followers(user)
         return {"followers": [follower.username for follower in followers]}, 200
-    
-
-
 
     @staticmethod
     def get_following(user_id):
@@ -136,6 +119,18 @@ class UserService:
         return {"following": [followed.username for followed in following]}, 200
 
     @staticmethod
+    def search_users(name):
+        users = UserRepository.search_users(name)
+        return [
+            {
+                "id": user.id,
+                "username": user.username,
+                "user_image": UserRepository.get_user_profile_image(user.id),
+                "followers_number": user.followers.count()
+            }
+            for user in users
+        ], 200
+      
     def get_user_by_id(user_id):
 
         user = UserRepository.get_user_by_id(user_id)
