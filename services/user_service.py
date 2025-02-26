@@ -134,3 +134,18 @@ class UserService:
         
         following = UserRepository.get_following(user)  
         return {"following": [followed.username for followed in following]}, 200
+
+    @staticmethod
+    def get_user_by_id(user_id):
+
+        user = UserRepository.get_user_by_id(user_id)
+
+        if not user:
+            return {"error": "Usuário não encontrado"}, 404
+
+        return {
+            "user_image": UserRepository.get_user_profile_image(user_id),
+            "username": user.username,
+            "followers_number": user.followers.count(),
+            "following_number": user.following.count()
+        }, 200
