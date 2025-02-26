@@ -82,3 +82,8 @@ class UserRepository:
         """ Retorna a URL da imagem do perfil do usuário """
         user = User.query.get(user_id)
         return user.profile_image if user and user.profile_image else None
+
+    @staticmethod
+    def search_users(name):
+        user = db.session.query(User).filter(User.username.ilike(f"%{name}%")).all()
+        return user

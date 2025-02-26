@@ -85,7 +85,6 @@ class PostService:
         """ Retorna todos os posts do usuário logado, incluindo imagem do autor e comentários """
         
         posts = PostRepository.get_posts_by_user(user_id)
-        current_user_id = get_jwt_identity()  # Obtém o ID do usuário autenticado
 
         return [
             {
@@ -97,20 +96,6 @@ class PostService:
                 "author_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(post.user_id)}" 
                     if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
                 "image_url": f"{SERVER_IP}{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
-                "comments": [
-                    {
-                        "id": comment.id,
-                        "content": comment.content,
-                        "user_id": comment.user_id,
-                        "username": UserRepository.get_username_by_id(comment.user_id),
-                        "user_image": f"{SERVER_IP}{UserRepository.get_user_profile_image(comment.user_id)}" 
-                            if UserRepository.get_user_profile_image(comment.user_id) else None,  # Imagem do usuário que comentou
-                        "post_id": comment.post_id,
-                                           
-                        "liked_by_user": CommentRepository.user_liked_comment(comment.id, current_user_id)  # Novo campo: Verifica se o usuário autenticado curtiu esse comentário
-                    }
-                    for comment in CommentRepository.get_comments_by_post(post.id)
-                ]
             }
             for post in posts
         ]
