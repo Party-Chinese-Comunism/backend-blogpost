@@ -35,6 +35,13 @@ def list_my_posts():
     posts = PostService.get_posts_by_user(current_user_id)
     return jsonify(posts), 200
 
+@post_controller.route('/<int:user_id>', methods=['GET'])
+@jwt_required()
+def posts_by_user(user_id):
+    """ Retorna todos os posts de um usuário """
+    posts = PostService.get_posts_by_user(user_id)
+    return jsonify(posts), 200
+
 @post_controller.route('/upload-post-image', methods=['POST'])
 @jwt_required()
 def upload_post_image():
