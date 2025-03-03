@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 import sys
 import os
 
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from services.comment_service import CommentService

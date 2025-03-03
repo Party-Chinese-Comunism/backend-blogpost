@@ -9,6 +9,7 @@ from utils.file_utils import  SERVER_IP
 user_controller = Blueprint('user_controller', __name__)
 
 
+SERVER_IP = "http://localhost:5000"
 
 @user_controller.route('/upload-profile-image', methods=['POST'])
 @jwt_required()
