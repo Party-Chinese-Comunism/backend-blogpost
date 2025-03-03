@@ -6,7 +6,8 @@ from utils.file_utils import allowed_file, generate_filename
 from flask import request
 
 UPLOAD_FOLDER = "uploads/"
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "avi", "mov", "mkv", "webm", "flv", "wmv"}
+
 
 class UserService:
     @staticmethod
