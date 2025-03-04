@@ -1,0 +1,54 @@
+name: Flask CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # Postgre não está configurado 
+    # services:
+    #   postgres:
+    #     image: postgres:latest
+    #     env:
+    #       POSTGRES_USER: postgres
+    #       POSTGRES_PASSWORD: 1919
+    #       POSTGRES_DB: blogdb
+    #     ports:
+    #       - 5432:5432
+    #     options: >-
+    #       --health-cmd='pg_isready -U postgres'
+    #       --health-interval=10s
+    #       --health-timeout=5s
+    #       --health-retries=5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        . venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # a variável de ambiente do banco de dados PostgreSQL
+    # - name: Set up environment variables
+    #   run: echo "DATABASE_URL=postgresql://user:password@localhost:5432/test_db" >> $GITHUB_ENV
+
+    - name: Run tests
+      run: |
+        . venv/bin/activate
+        pytest --maxfail=1 --disable-warnings -q
