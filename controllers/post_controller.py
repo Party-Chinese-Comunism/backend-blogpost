@@ -36,7 +36,6 @@ def list_my_posts():
     return jsonify(posts), 200
 
 @post_controller.route('/<int:user_id>', methods=['GET'])
-@jwt_required()
 def posts_by_user(user_id):
     """ Retorna todos os posts de um usuário """
     posts = PostService.get_posts_by_user(user_id)
