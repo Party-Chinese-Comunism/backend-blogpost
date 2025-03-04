@@ -3,13 +3,27 @@ from unittest.mock import patch, MagicMock
 import sys
 import os
 
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+from app import create_app, db 
 from services.comment_service import CommentService
-
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
+
+
+@pytest.fixture
+def app():
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.session.remove()
+        db.drop_all()
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
 
 class TestCommentService:
 
@@ -59,13 +73,13 @@ class TestCommentService:
         assert response["user_id"] == 1
 
     @patch.object(CommentRepository, 'get_comments_by_post')
-    def test_get_comments_by_post(self, mock_get_comments_by_post):
-        
+    def test_get_comments_by_post(self, mock_get_comments_by_post, client):
         post_id = 1
         mock_comment = MagicMock(id=1, content="Comentário", post_id=post_id, user_id=1)
         mock_get_comments_by_post.return_value = [mock_comment]
 
-        comments = CommentService.get_comments_by_post(post_id)
+        with client.application.test_request_context(): 
+            comments = CommentService.get_comments_by_post(post_id)
 
         assert len(comments) == 1
         assert comments[0]["content"] == "Comentário"

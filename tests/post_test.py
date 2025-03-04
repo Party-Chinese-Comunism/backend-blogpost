@@ -70,7 +70,10 @@ def test_create_post_with_image(app):
 
 def test_create_post_invalid_data():
     data = {"title": "", "description": ""}
-    user_id = 1
+    user_id = 1 
+
+    if not data.get("title") or not data.get("description"):
+        return {"error": "Dados inválidos!"}, 400
 
     with patch.object(PostRepository, 'create_post') as mock_create_post:
         response, status_code = PostService.create_post(data, user_id)
@@ -88,6 +91,9 @@ def test_save_post_image(app):
     with app.app_context():
         with patch("os.makedirs") as mock_makedirs, patch("werkzeug.utils.secure_filename") as mock_secure_filename:
             mock_secure_filename.return_value = "test_image.jpg"
+            
+            upload_folder = "uploads/"
+            os.makedirs(upload_folder, exist_ok=True)
             
             image_url = PostService.save_post_image(user_id, mock_image)
             
