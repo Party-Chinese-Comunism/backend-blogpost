@@ -4,25 +4,32 @@ import os
 
 app = create_app()
 
-PORT = "5000"
-
-if __name__ == "__main__":
+def run_migrations():
+    """Executa as migrations automaticamente ao iniciar."""
     with app.app_context():
         migrations_folder = os.path.join(os.getcwd(), "migrations")
-        #db.create_all() 
-        # Se não existir a pasta "migrations", inicializa automaticamente
+
         if not os.path.exists(migrations_folder):
             print("[INFO] Criando diretório de migrations automaticamente...")
             init()
 
-        # Gera uma nova migration automaticamente se houver mudanças
         print("[INFO] Verificando se há mudanças no banco...")
         migrate(message="Automated migration")
 
-        # Aplica as migrations automaticamente ao iniciar
         print("[INFO] Aplicando migrations ao banco de dados...")
         upgrade()
-        
 
-    app.run(debug=True, host='0.0.0.0', port=PORT)
+def run_tests():
+    """Executa os testes automatizados antes de iniciar o servidor."""
+    import pytest
+    print("[INFO] Executando testes automatizados...")
+    pytest.main(["-q", "--disable-warnings", "tests/"])
 
+def main():
+    """Ponto de entrada para execução do servidor."""
+    run_migrations()
+    run_tests()
+    app.run(debug=True, host=os.getenv("FLASK_RUN_HOST","0.0.0.0"), port=int(os.getenv("FLASK_RUN_PORT", 5000)))
+
+if __name__ == "__main__":
+    main()
