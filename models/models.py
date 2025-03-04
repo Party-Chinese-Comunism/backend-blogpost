@@ -3,22 +3,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 
 favorites = db.Table('favorites', 
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
+    db.Column('user_id', db.BigInteger, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('post_id', db.BigInteger, db.ForeignKey('post.id'), primary_key=True)
 )
 
 likes = db.Table('likes',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('comment_id', db.Integer, db.ForeignKey('comment.id'), primary_key=True)                 
+    db.Column('user_id', db.BigInteger, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('comment_id', db.BigInteger, db.ForeignKey('comment.id'), primary_key=True)                 
 )
 
 followers = db.Table('followers',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    db.Column('follower_id', db.BigInteger, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('followed_id', db.BigInteger, db.ForeignKey('user.id'), primary_key=True)
 )
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
@@ -46,36 +46,36 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
 class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(20), nullable=False)
-    description = db.Column(db.String(256), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)  # Aumentei o tamanho do título para 100 caracteres
+    description = db.Column(db.Text, nullable=False)  # Usei db.Text() para descrições longas
     comments = db.relationship('Comment', backref='post', lazy=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     image_url = db.Column(db.String(256), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.now)
-    update_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    update_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     def favorites_count(self):
         return len(self.favorited_by)
 
 
 class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(256), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    content = db.Column(db.Text, nullable=True)  # Alterei para db.Text() para melhor compatibilidade
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.BigInteger, db.ForeignKey('post.id'), nullable=False)
 
     def likes_count(self):
         return len(self.liked_by)
     
 class RevokedToken(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     jti = db.Column(db.String(120), nullable=False)  # JWT ID (identificador único do token)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
 class RefreshToken(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id = db.Column(db.BigInteger, primary_key=True)
+    user_id = db.Column(db.BigInteger, db.ForeignKey('user.id'), nullable=False)
     jti = db.Column(db.String(120), nullable=False, unique=True)  # Identificador único do token
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc)) 
     revoked = db.Column(db.Boolean, default=False)  # Se o token foi revogado
