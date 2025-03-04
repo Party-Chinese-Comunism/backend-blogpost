@@ -43,7 +43,7 @@ def create_app():
 
     return app
 
-# 🔹 Adicionando a validação da blacklist de tokens
+# Adicionando a validação da blacklist de tokens
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_data):
     from models.models import RevokedToken
