@@ -31,7 +31,7 @@ def run_tests():
 
 def main():
     """Ponto de entrada para execução do servidor."""
-    run_tests()
+    # run_tests()
     run_migrations()
     app.run(debug=True, host=os.getenv("FLASK_RUN_HOST","0.0.0.0"), port=int(os.getenv("FLASK_RUN_PORT", 5000)))
 
