@@ -9,22 +9,23 @@ from app import create_app, db
 from services.comment_service import CommentService
 from repositories.post_repository import PostRepository
 from repositories.comment_repository import CommentRepository
-from repositories.user_repository import UserRepository  # Adicionado para mockar a função get_username_by_id
-
+from repositories.user_repository import UserRepository
 
 # Fixture do aplicativo que usa SQLite em memória para os testes
-# Vamos evitar o uso do banco real com mocks e não utilizar o banco SQLite
 @pytest.fixture
 def app():
     app = create_app()
     
-    # Defina o banco de dados para SQLite em memória durante os testes
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Não vamos usar banco real nos testes
+    # Certifique-se de que está usando o banco SQLite em memória
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Usando SQLite em memória
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    print("Banco de dados configurado para SQLite em memória:", app.config['SQLALCHEMY_DATABASE_URI'])
 
     with app.app_context():
-        # Não precisamos criar e dropar o banco real aqui, porque estamos mockando tudo
+        db.create_all()  # Cria as tabelas no banco em memória
         yield app
+        db.session.remove()
+        db.drop_all()  # Limpa o banco após os testes
 
 @pytest.fixture
 def client(app):
@@ -74,11 +75,22 @@ class TestCommentService:
         assert response["post_id"] == 1
         assert response["user_id"] == 1
 """
+tem q arrumar o teste abaixo
+
     @patch.object(CommentRepository, 'get_comments_by_post')
     @patch.object(UserRepository, 'get_username_by_id')  # Mockando a função get_username_by_id
-    def test_get_comments_by_post(self, mock_get_username_by_id, mock_get_comments_by_post, client):
+    @patch('repositories.user_repository.User.query.get')  # Mockando a consulta do User.query.get()
+    def test_get_comments_by_post(self, mock_get_user, mock_get_username_by_id, mock_get_comments_by_post, client):
         post_id = 1
-        mock_comment = MagicMock(id=1, content="Comentário", post_id=post_id, user_id=1)
+        user_id = 1
+
+        # Mockando o usuário retornado
+        mock_user = MagicMock()
+        mock_user.username = "username"
+        mock_get_user.return_value = mock_user
+
+        # Mockando o comentário retornado
+        mock_comment = MagicMock(id=1, content="Comentário", post_id=post_id, user_id=user_id)
         mock_get_comments_by_post.return_value = [mock_comment]
         mock_get_username_by_id.return_value = "username"  # Retorno mockado para o nome de usuário
 
@@ -90,5 +102,5 @@ class TestCommentService:
         assert comments[0]["content"] == "Comentário"
         assert comments[0]["post_id"] == post_id
         assert comments[0]["user_id"] == 1
-        assert comments[0]["username"] == "username"  # Verificando o nome do usuário mockado
+        assert comments[0]["username"] == "username" 
 """
