@@ -28,7 +28,7 @@ def upload_profile_image():
 
     return jsonify({
         "message": "Imagem de perfil atualizada com sucesso!",
-        "profile_image": f"{SERVER_IP}{image_url}"
+        "image_url": f"{SERVER_IP}{image_url}"
     }), 200
 
 @user_controller.route('/profile-image/<int:user_id>', methods=['GET'])
