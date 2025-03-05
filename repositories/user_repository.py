@@ -1,5 +1,6 @@
 from models.models import User, Post, Comment, followers
 from app import db
+from sqlalchemy.orm import Session
 
 class UserRepository:
     @staticmethod
@@ -20,7 +21,8 @@ class UserRepository:
 
     @staticmethod
     def get_user_by_id(user_id):
-        return User.query.get(user_id)
+        # return User.query.get(user_id)
+        return db.session.get(User, user_id)
 
     @staticmethod 
     def get_post_by_id(post_id):
