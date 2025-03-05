@@ -83,4 +83,3 @@ def test_get_followers():
         
         assert response == {"followers": ["user1", "user2"]}
         assert status_code == 200
-
