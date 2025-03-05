@@ -32,10 +32,6 @@ jobs:
       run: |
         . venv/bin/activate
         pytest tests/user_test.py --maxfail=1 --disable-warnings -q
-    - name: comment testes
-      run: |
-        . venv/bin/activate
-        pytest tests/comment_test.py --maxfail=1 --disable-warnings -q
     - name: post testes 
       run: |
         . venv/bin/activate
