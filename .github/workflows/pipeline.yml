@@ -3,10 +3,10 @@ name: Flask CI Workflow
 on:
   push:
     branches:
-      - main
+      - pipe  # Nome da sua branch para rodar o workflow
   pull_request:
     branches:
-      - main
+      - pipe  # Quando um pull request for feito para a branch 'pipe'
 
 jobs:
   test:
@@ -16,7 +16,7 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_DB: blogdb
+          POSTGRES_DB: blogdb  # Nome do banco de dados a ser criado automaticamente
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
