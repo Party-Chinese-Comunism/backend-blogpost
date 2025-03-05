@@ -12,6 +12,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: blogdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -28,13 +38,28 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: user testes
+    - name: Set DATABASE_URL environment variable
+      run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/blogdb" >> $GITHUB_ENV
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        sudo apt-get install -y netcat
+        while ! nc -z localhost 5432; do
+          echo "Waiting for PostgreSQL to be ready..."
+          sleep 2
+        done
+
+    - name: Run database migrations
+      run: |
+        . venv/bin/activate
+        flask db upgrade  # Aplica as migrações para criar as tabelas
+
+    - name: Run user tests
       run: |
         . venv/bin/activate
         pytest tests/user_test.py --maxfail=1 --disable-warnings -q
-    - name: post testes 
+
+    - name: Run comment tests
       run: |
         . venv/bin/activate
-        pytest tests/post_test.py --maxfail=1 --disable-warnings -q
-   
-   
+        pytest tests/comment_test.py --maxfail=1 --disable-warnings -q
