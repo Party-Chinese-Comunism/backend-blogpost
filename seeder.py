@@ -1,9 +1,9 @@
-from app import create_app, db  # Importando a função que cria o app e o db
-from models.models import User, Post, Comment  # Ajuste para importar os modelos
+from app import create_app, db  
+from models.models import User, Post, Comment 
 from faker import Faker
 import random
 
-app = create_app()  # Supondo que você tenha uma função para criar o app
+app = create_app()
 fake = Faker()
 
 def create_fake_users(n):
@@ -42,7 +42,7 @@ def create_fake_comments(n):
     db.session.commit()
 
 if __name__ == "__main__":
-    with app.app_context():  # Criando o contexto do app Flask
+    with app.app_context(): 
         create_fake_users(10)
         create_fake_posts(20)
         create_fake_comments(50)
