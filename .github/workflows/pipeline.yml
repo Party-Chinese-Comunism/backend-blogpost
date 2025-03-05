@@ -28,10 +28,17 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run user tests 
+    - name: user testes
       run: |
         . venv/bin/activate
         pytest tests/user_test.py --maxfail=1 --disable-warnings -q
-    - name: Run user tests sem venv
+    - name: post testes 
       run: |
-        pytest tests/user_test.py --maxfail=1 --disable-warnings -q
+        . venv/bin/activate
+        pytest tests/post_test.py --maxfail=1 --disable-warnings -q
+    - name: comment testes
+      run: |
+        . venv/bin/activate
+        pytest tests/comment_test.py --maxfail=1 --disable-warnings -q
+        
+   
