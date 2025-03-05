@@ -44,6 +44,23 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    #Função para verificaçoes de usuario##
+    def follow(self, user):
+        """ Segue um usuário. """
+        if not self.is_following(user):  
+            self.following.append(user) 
+            db.session.commit()  
+
+    def unfollow(self, user):
+        """ Deixa de seguir um usuário. """
+        if self.is_following(user):  
+            self.following.remove(user) 
+            db.session.commit()  
+
+    def is_following(self, user):
+        """ Verifica se o usuário atual está seguindo outro usuário. """
+        return self.following.filter(followers.c.followed_id == user.id).count() > 0
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)

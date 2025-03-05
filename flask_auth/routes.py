@@ -109,3 +109,40 @@ def protected():
         "username": user.username,
         "email": user.email
     }), 200
+
+  
+  #METODO SEGUIR E DEIXAR DE SEGUIR #
+@auth.route('/api/user/follow/<int:user_id>', methods=['POST'])
+@jwt_required()  
+def follow_user(user_id):
+    current_user_id = get_jwt_identity()  
+    current_user = User.query.get(current_user_id)  
+    user_to_follow = User.query.get(user_id)  
+
+    if not user_to_follow:
+        return jsonify({"error": "Usuário não encontrado"}), 404
+
+    if current_user.id == user_to_follow.id:
+        return jsonify({"error": "Você não pode seguir a si mesmo"}), 400
+
+    # Segue o usuario
+    current_user.follow(user_to_follow)
+    db.session.commit()
+
+    return jsonify({"message": f"Você está seguindo {user_to_follow.username}"}), 200
+
+@auth.route('/api/user/unfollow/<int:user_id>', methods=['POST'])
+@jwt_required() 
+def unfollow_user(user_id):
+    current_user_id = get_jwt_identity()  
+    current_user = User.query.get(current_user_id)  
+    user_to_unfollow = User.query.get(user_id)  
+
+    if not user_to_unfollow:
+        return jsonify({"error": "Usuário não encontrado"}), 404
+
+    # Deixa de seguir o usuario
+    current_user.unfollow(user_to_unfollow)
+    db.session.commit()
+
+    return jsonify({"message": f"Você deixou de seguir {user_to_unfollow.username}"}), 200
