@@ -3,10 +3,10 @@ name: Flask CI Workflow
 on:
   push:
     branches:
-      - pipe
+      - main
   pull_request:
     branches:
-      - pipe
+      - main
 
 jobs:
   test:
