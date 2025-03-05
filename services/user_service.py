@@ -5,7 +5,7 @@ from repositories.user_repository import UserRepository
 from utils.file_utils import allowed_file, generate_filename
 from flask import request
 
-UPLOAD_FOLDER = "uploads/"
+UPLOAD_FOLDER = "uploads/profile_pictures"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "avi", "mov", "mkv", "webm", "flv", "wmv"}
 
 
@@ -23,7 +23,7 @@ class UserService:
             image.save(filepath)  # 🔹 Salva a imagem no diretório
             image_url = f"/uploads/profile_pictures/{filename}"
 
-            updated_user = UserRepository.update_profile_image(user_id, image_url)
+            updated_user = UserRepository.update_profile_image(user_id, filename)
             return updated_user, image_url
 
         return None, None
