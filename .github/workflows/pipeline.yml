@@ -3,24 +3,14 @@ name: Flask CI Workflow
 on:
   push:
     branches:
-      - pipe  # Nome da sua branch para rodar o workflow
+      - pipe
   pull_request:
     branches:
-      - pipe  # Quando um pull request for feito para a branch 'pipe'
+      - pipe
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: blogdb  # Nome do banco de dados a ser criado automaticamente
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
 
     steps:
     - name: Checkout code
@@ -38,28 +28,14 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Set DATABASE_URL environment variable
-      run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/blogdb" >> $GITHUB_ENV
-
-    - name: Wait for PostgreSQL to be ready
-      run: |
-        sudo apt-get install -y netcat
-        while ! nc -z localhost 5432; do
-          echo "Waiting for PostgreSQL to be ready..."
-          sleep 2
-        done
-
-    - name: Run database migrations
-      run: |
-        . venv/bin/activate
-        flask db upgrade  # Aplica as migrações para criar as tabelas
-
-    - name: Run user tests
+    - name: user testes
       run: |
         . venv/bin/activate
         pytest tests/user_test.py --maxfail=1 --disable-warnings -q
-
-    - name: Run comment tests
+    - name: comment testes
       run: |
         . venv/bin/activate
         pytest tests/comment_test.py --maxfail=1 --disable-warnings -q
+
+   
+   
