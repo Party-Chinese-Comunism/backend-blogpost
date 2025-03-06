@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -9,13 +9,13 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/blogdb
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/blogdb
     depends_on:
-      - db
+      - postgres
 
-  db:
+  postgres:
     image: bitnami/postgresql:latest
-    container_name: db
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
