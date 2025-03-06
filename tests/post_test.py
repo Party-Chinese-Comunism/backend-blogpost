@@ -11,19 +11,28 @@ from repositories.post_repository import PostRepository
 from repositories.user_repository import UserRepository
 from werkzeug.datastructures import FileStorage
 
+# Fixture do aplicativo que usa SQLite em memória para os testes
 @pytest.fixture
 def app():
     app = create_app()
+
+    # Confirmação de que o banco de dados é SQLite em memória
+    print(f"SQLALCHEMY_DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+
+    # Configuração para usar o SQLite em memória
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Usando SQLite em memória
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
     with app.app_context():
-        db.create_all()
+        db.create_all()  # Cria as tabelas no banco em memória
         yield app
         db.session.remove()
-        db.drop_all()
+        db.drop_all()  # Limpa o banco após os testes
+
 
 @pytest.fixture
 def client(app):
-    return app.test_client()
-
+    return app.test_client()  # Retorna um cliente de teste para interagir com a aplicação
 
 def test_create_post_without_image(app):
     data = {"title": "Test Post", "description": "This is a test post."}
@@ -41,7 +50,6 @@ def test_create_post_without_image(app):
             assert response["title"] == "Test Post"
             assert response["description"] == "This is a test post."
             assert status_code == 201
-
 
 def test_create_post_with_image(app):
     data = {"title": "Test Post with Image", "description": "This post has an image."}
@@ -66,8 +74,6 @@ def test_create_post_with_image(app):
             assert response["image_url"] == "/uploads/test_image.jpg"
             assert status_code == 201
 
-
-
 def test_create_post_invalid_data():
     data = {"title": "", "description": ""}
     user_id = 1 
@@ -78,10 +84,8 @@ def test_create_post_invalid_data():
     with patch.object(PostRepository, 'create_post') as mock_create_post:
         response, status_code = PostService.create_post(data, user_id)
 
-        
+        # Verificando que a criação de post não foi chamada, pois os dados são inválidos
         assert mock_create_post.call_count == 0  
-
-
 
 def test_save_post_image(app):
     user_id = 1
