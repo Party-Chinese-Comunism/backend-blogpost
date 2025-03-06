@@ -58,5 +58,5 @@ def upload_post_image():
 
     return jsonify({
         "message": "Imagem do post enviada com sucesso!",
-        "image_url": f"{SERVER_IP}{image_url}"
+        "image_url": f"{SERVER_IP}/uploads/{image_url}"
     }), 200

@@ -8,6 +8,7 @@ from flask import request
 UPLOAD_FOLDER = "uploads/profile_pictures"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "avi", "mov", "mkv", "webm", "flv", "wmv"}
 
+SERVER_IP = "http://localhost:5000"
 
 class UserService:
     @staticmethod
@@ -126,7 +127,7 @@ class UserService:
             {
                 "id": user.id,
                 "username": user.username,
-                "user_image": UserRepository.get_user_profile_image(user.id),
+                "user_image": f"{SERVER_IP}/uploads/profile_pictures/{UserRepository.get_user_profile_image(user.id)}",
                 "followers_number": user.followers.count()
             }
             for user in users
