@@ -1,10 +1,17 @@
 version: "3.8"
 
 services:
+  frontend:
+    image: dogogh1/frontend-blogpost:latest
+    container_name: frontend
+    ports:
+      - "4173:4173"  
+      - "3000:3000"
+    networks:
+      - front_network
+
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
+    image: dogogh1/blog-backend:latest
     container_name: backend
     ports:
       - "5000:5000"
@@ -12,6 +19,9 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/blogdb
     depends_on:
       - postgres
+    networks:
+      - front_network
+      - banco_network
 
   postgres:
     image: bitnami/postgresql:latest
@@ -24,16 +34,14 @@ services:
       - "5432:5432"
     volumes:
       - blog_pg_data:/bitnami/postgresql
-
-  redis:
-    image: bitnami/redis:latest
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/bitnami/redis/data
+    networks:
+      - banco_network
 
 volumes:
   blog_pg_data:
-  redis_data:
+
+networks:
+  banco_network:
+    driver: bridge
+  front_network:
+    driver: bridge
