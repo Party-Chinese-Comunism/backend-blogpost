@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 PORT = "5000"
-SERVER_IP = f"http://{socket.gethostbyname(socket.gethostname())}:{PORT}"
+SERVER_IP = f"http://backend:{PORT}"
 
 def allowed_file(filename):
     """ Verifica se o arquivo tem uma extensão permitida """

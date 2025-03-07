@@ -4,11 +4,11 @@ from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
 from utils.file_utils import allowed_file, generate_filename
 from flask import request
+from utils.file_utils import  SERVER_IP
 
 UPLOAD_FOLDER = "uploads/profile_pictures"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "avi", "mov", "mkv", "webm", "flv", "wmv"}
 
-SERVER_IP = "http://localhost:5000"
 
 class UserService:
     @staticmethod

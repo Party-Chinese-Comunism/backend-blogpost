@@ -5,10 +5,10 @@ from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
 from utils.file_utils import *
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from utils.file_utils import  SERVER_IP
 
 UPLOAD_FOLDER = "uploads/"
 
-SERVER_IP = "http://localhost:5000"
 
 class PostService:
     @staticmethod
