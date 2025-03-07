@@ -1,0 +1,17 @@
+filebeat.inputs:
+  - type: docker
+    containers.ids: '*'
+    paths:
+      - '/var/lib/docker/containers/*/*.log'
+    fields:
+      log_type: container
+    multiline.pattern: '^\s'
+    multiline.negate: true
+    multiline.match: after
+
+setup.template.name: "docker-logs"
+setup.template.pattern: "docker-logs-*"
+
+output.elasticsearch:
+  hosts: ['http://localhost:9200']
+  index: "docker-logs-%{+yyyy.MM.dd}"
