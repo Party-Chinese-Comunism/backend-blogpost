@@ -25,9 +25,9 @@ def create_app():
     IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
 
     # Rota para servir as imagens
-    @app.route('/uploads/<path:filename>')
-    def serve_image(filename):
-        return send_from_directory(IMAGE_FOLDER, filename)
+    # @app.route('/uploads/<path:filename>')
+    # def serve_image(filename):
+    #     return send_from_directory(IMAGE_FOLDER, filename)
 
     # Importando os blueprints e registrando no aplicativo
     from flask_auth.routes import auth
@@ -36,10 +36,10 @@ def create_app():
     from controllers.user_controller import user_controller
     
     # Registrando os blueprints com o prefixo adequado
-    app.register_blueprint(auth, url_prefix="/api")
-    app.register_blueprint(post_controller, url_prefix="/api/posts")
-    app.register_blueprint(comment_controller, url_prefix="/api/comments")
-    app.register_blueprint(user_controller, url_prefix="/api/user")
+    app.register_blueprint(auth, url_prefix="/auth")
+    app.register_blueprint(post_controller, url_prefix="/posts")
+    app.register_blueprint(comment_controller, url_prefix="/comments")
+    app.register_blueprint(user_controller, url_prefix="/user")
 
     return app
 
