@@ -6,7 +6,7 @@ services:
       - "8080:80"   
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./uploads:/var/www/uploads
+      - ../uploads:/var/www/uploads
     depends_on:
       - frontend
       - backend
@@ -31,7 +31,7 @@ services:
     expose:
       - "3000"
     volumes:
-      - ./uploads:/app/uploads
+      - ../uploads:/app/uploads
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/blogdb
     depends_on:
@@ -83,7 +83,7 @@ services:
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/log:/var/log:ro
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ../filebeat.yml:/usr/share/filebeat/filebeat.yml
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     networks:
