@@ -91,7 +91,7 @@ services:
     restart: always
 
 volumes:
-  postgres_data:  # Volume único para PostgreSQL
+   blog_pg_data:
 
 networks:
   banco_network:
