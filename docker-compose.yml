@@ -18,7 +18,6 @@ services:
     container_name: frontend
     networks:
       - front_network
-
   backend:
     image: dogogh1/blog-backend:latest
     container_name: backend
@@ -29,6 +28,12 @@ services:
     networks:
       - front_network
       - banco_network
+    volumes:
+      - ./filebeat.yml:/etc/filebeat/filebeat.yml  # Mapeando o arquivo de configuração do Filebeat
+      - /var/log:/var/log  # Mapeando os logs para que o Filebeat possa acessá-los
+    command: filebeat -e -d "*"  # Inicia o Filebeat dentro do contêiner
+
+
 
   postgres:
     image: postgres:latest  # Nome correto da imagem oficial

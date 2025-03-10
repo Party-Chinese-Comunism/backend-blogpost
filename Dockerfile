@@ -1,6 +1,9 @@
 # Use a imagem base do Python
 FROM python:3.12.2-slim
 
+# Atualize o repositório e instale o curl
+RUN apt-get update && apt-get install -y curl
+
 # Diretório de trabalho no contêiner
 WORKDIR /app
 
