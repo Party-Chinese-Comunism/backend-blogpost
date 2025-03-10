@@ -1,26 +1,17 @@
 filebeat.inputs:
-  - type: log
+  - type: docker
+    containers.ids: '*'
     paths:
-      - '/var/log/*.log'  # Captura todos os arquivos .log em /var/log
-      - '/var/log/**/*.log'  # Captura recursivamente todos os arquivos .log dentro de subdiretórios
+      - '/var/lib/docker/containers/*/*.log'
     fields:
-      log_type: system  # Você pode ajustar este campo se necessário
-    multiline.pattern: '^\s'  # Combine múltiplas linhas de logs se necessário
+      log_type: container
+    multiline.pattern: '^\s'
     multiline.negate: true
     multiline.match: after
 
-setup.template.name: "docker-back-logs"
-setup.template.pattern: "docker-back-logs-*"
+setup.template.name: "docker-logs"
+setup.template.pattern: "docker-logs-*"
 
-# Saída para Elasticsearch
 output.elasticsearch:
-  hosts: ['http://elasticsearch:9200']  # Certifique-se de que o Elasticsearch está acessível a partir do contêiner
+  hosts: ['http://elasticsearch:9200']
   index: "docker-logs-%{+yyyy.MM.dd}"
-
-logging.level: info
-logging.to_files: true
-logging.files:
-  path: /var/log/filebeat  # O diretório onde os logs do Filebeat serão armazenados
-  name: filebeat
-  keepfiles: 7
-  permissions: 0644
