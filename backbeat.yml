@@ -1,0 +1,27 @@
+filebeat.inputs:
+  - type: log
+    paths:
+      - '/var/log/*.log' 
+    fields:
+      log_type: container
+    multiline.pattern: '^\s'
+    multiline.negate: true
+    multiline.match: after
+
+
+setup.template.name: "docker-back-logs"
+setup.template.pattern: "docker-back-logs-*"
+
+# Saída para Elasticsearch
+output.elasticsearch:
+  hosts: ['http://elasticsearch:9200']  
+  index: "docker-logs-%{+yyyy.MM.dd}"
+
+
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
