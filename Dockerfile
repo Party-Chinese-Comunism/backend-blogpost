@@ -1,27 +1,25 @@
-# Use a imagem base
+# Use a imagem base do Python
 FROM python:3.12.2-slim
 
-# Instalar dependências necessárias para o Filebeat
-RUN apt-get update && apt-get install -y curl apt-transport-https gnupg
+# Diretório de trabalho no contêiner
+WORKDIR /app
 
-# Adicionar a chave GPG do repositório Elastic
-RUN curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+# Copie o arquivo de requisitos para o contêiner
+COPY requirements.txt .
 
-# Adicionar o repositório do Elastic
-RUN echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-8.x.list
+# Instale as dependências Python
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Atualizar os repositórios e instalar o Filebeat
-RUN apt-get update && apt-get install -y filebeat
+# Instalar o Filebeat
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.6.2-amd64.deb && \
+    dpkg -i filebeat-8.6.2-amd64.deb && \
+    rm -f filebeat-8.6.2-amd64.deb
 
-# Copiar o arquivo de configuração do Filebeat
-COPY filebeat.yml /etc/filebeat/filebeat.yml
+# Copie o código do aplicativo Flask para o contêiner
+COPY . .
 
-# Expor a porta do serviço Filebeat (caso necessário)
+# Exponha a porta 5000
 EXPOSE 5000
 
-# Configurar o entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Definir o entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Comando para rodar o Flask e o Filebeat
+CMD ["sh", "-c", "filebeat -e -d '*' & flask run --host=0.0.0.0"]
