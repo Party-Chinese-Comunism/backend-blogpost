@@ -1,8 +1,12 @@
 FROM python:3.12.2-slim
 
-# Instalar o Filebeat
-RUN apt-get update && apt-get install -y curl apt-transport-https
+# Instalar dependências necessárias para o Filebeat
+RUN apt-get update && apt-get install -y curl apt-transport-https gnupg
+
+# Baixar o pacote do Filebeat
 RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-amd64.deb
+
+# Instalar o Filebeat
 RUN dpkg -i filebeat-7.4.0-amd64.deb && apt-get install -f
 
 # Definir o diretório de trabalho
