@@ -1,13 +1,13 @@
 FROM python:3.12.2-slim
 
 # Instalar dependências necessárias para o Filebeat
-RUN apt-get update && apt-get install -y curl apt-transport-https gnupg
+RUN apt-get update && \
+    apt-get install -y curl apt-transport-https gnupg && \
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-amd64.deb && \
+    dpkg -i filebeat-7.4.0-amd64.deb || apt-get install -f -y
 
-# Baixar o pacote do Filebeat
-RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-amd64.deb
-
-# Instalar o Filebeat
-RUN dpkg -i filebeat-7.4.0-amd64.deb && apt-get install -f
+# Garantir que o Filebeat esteja no PATH
+ENV PATH=$PATH:/usr/share/filebeat/bin
 
 # Definir o diretório de trabalho
 WORKDIR /app
@@ -23,7 +23,7 @@ COPY . .
 EXPOSE 5000
 
 # Copiar o arquivo de configuração do Filebeat
-COPY backbeat.yml /etc/filebeat/filebeat.yml
+COPY filebeat.yml /etc/filebeat/filebeat.yml
 
 # Copiar o entrypoint script
 COPY entrypoint.sh /entrypoint.sh
