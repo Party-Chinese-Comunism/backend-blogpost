@@ -4,6 +4,7 @@ from repositories.comment_repository import CommentRepository
 from repositories.user_repository import UserRepository
 from utils.file_utils import allowed_file, generate_filename
 from flask import request
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from utils.file_utils import  SERVER_IP
 
 UPLOAD_FOLDER = "uploads/profile_pictures"
@@ -127,6 +128,7 @@ class UserService:
             {
                 "id": user.id,
                 "username": user.username,
+                "email": user.email,
                 "user_image": f"{SERVER_IP}/uploads/profile_pictures/{UserRepository.get_user_profile_image(user.id)}",
                 "followers_number": user.followers.count()
             }
@@ -139,10 +141,19 @@ class UserService:
 
         if not user:
             return {"error": "Usuário não encontrado"}, 404
+        
+        is_following = False
+
+        if verify_jwt_in_request() and get_jwt_identity():
+            follower = UserRepository.get_user_by_id(get_jwt_identity())
+            followed = UserRepository.get_user_by_id(user_id)
+            is_following = UserRepository.is_following(follower, followed)
+            print(is_following)
 
         return {
-            "user_image": UserRepository.get_user_profile_image(user_id),
+            "user_image": f"{SERVER_IP}/api/user/uploads/profile_pictures/{UserRepository.get_user_profile_image(user_id)}",
             "username": user.username,
+            "is_following": is_following,
             "followers_number": user.followers.count(),
             "following_number": user.following.count()
         }, 200
