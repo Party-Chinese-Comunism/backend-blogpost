@@ -2,8 +2,8 @@ FROM python:3.12.2-slim
 
 # Instalar o Filebeat
 RUN apt-get update && apt-get install -y curl apt-transport-https
-RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.6.3-amd64.deb
-RUN dpkg -i filebeat-8.6.3-amd64.deb && apt-get install -f
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-amd64.deb
+RUN dpkg -i filebeat-7.4.0-amd64.deb && apt-get install -f
 
 # Definir o diretório de trabalho
 WORKDIR /app
