@@ -23,7 +23,7 @@ def create_app():
 
     # Configuração de onde as imagens serão armazenadas
     IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
-
+ # Rota para servir as imagens # Rota para servir as imagens # Rota para servir as imagens # Rota para servir as imagens
     # Rota para servir as imagens
     @app.route('/uploads/<path:filename>')
     def serve_image(filename):
