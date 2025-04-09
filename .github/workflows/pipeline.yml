@@ -70,15 +70,12 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
       - name: SSH into VPN Server and Connect to Internal VMs
         run: |
-          # Instalar o sshpass (caso necessário)
-          sudo apt-get install -y sshpass
+ 
           
-          # Conectar à VM de VPN usando o IP externo e fornecer a senha automaticamente
-          sshpass -p 'teste' ssh teste@34.123.48.112 << 'EOF'
+          ssh teste@34.123.48.112 << 'EOF'
             echo "Conectado à VPN Server"
           EOF
             
-            # Conectar à VM interna 1 com IP 10.0.1.3
             ssh -o StrictHostKeyChecking=no root@10.0.1.3 << 'EOF2'
               echo "Conectado à VM Interna 1"
             EOF2
