@@ -68,9 +68,15 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_LUCAS_DB }}
 
-      - name: SSH into VM as root and deploy Docker PostgreSQL
+      - name: SSH into VPN Server and Connect to Internal VMs
         run: |
-          ssh -o StrictHostKeyChecking=no root@10.0.1.3 << 'EOF'
-            docker pull postgres:latest
-            docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=blogdb -p 5432:5432 postgres:latest
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/google-cloud-id_ed25519 root@34.123.48.112 << 'EOF'
+  
+            echo "Conectado à VPN Server"
+       
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/google-cloud-id_ed25519 root@10.0.1.3 << 'EOF2'
+              echo "Conectado à VM Interna 1"
+         
+            EOF2
+            
           EOF
