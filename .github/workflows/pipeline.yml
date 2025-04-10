@@ -68,6 +68,6 @@ jobs:
 
     - name: SSH into VPN Server using password
       run: |
-        sshpass -p 'sua_senha_aqui' ssh -o StrictHostKeyChecking=no teste@34.123.48.112 << 'EOF'
+        sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@34.123.48.112 << 'EOF'
           echo "Conectado à VPN Server"
           EOF
