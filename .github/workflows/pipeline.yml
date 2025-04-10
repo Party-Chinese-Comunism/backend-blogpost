@@ -71,7 +71,7 @@ jobs:
       run: |
         sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 << 'EOF'
         # Dentro da sessão SSH para a VPN, fazer uma nova conexão SSH ao servidor 10.0.1.2, fornecendo a senha automaticamente
-        sshpass -p '1919' ssh -i ~/.ssh/id_vpn_key -o StrictHostKeyChecking=no quadros01919@10.0.1.2 "mkdir -p /home/quadros01919/nova_pasta && echo 'Pasta criada no servidor 10.0.1.2!'"
+        ssh -i ~/.ssh/id_vpn_key quadros01919@10.0.1.2 "mkdir -p /home/quadros01919/nova_pasta && echo 'Pasta criada no servidor 10.0.1.2!'"
         EOF
 
 
