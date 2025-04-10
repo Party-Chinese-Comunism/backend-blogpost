@@ -69,4 +69,11 @@ jobs:
 
     - name: SSH into VPN Server using password
       run: |
-        sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 "echo 'Conectado à VPN Server'"
+        sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 "mkdir -p /home/vmvpn/nova_pasta && echo 'Pasta criada com sucesso!'"
+
+
+
+
+
+
+        
