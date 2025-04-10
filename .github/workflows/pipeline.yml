@@ -62,12 +62,11 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
 
+    
     steps:
     - name: Install sshpass
       run: sudo apt-get update && sudo apt-get install -y sshpass
 
     - name: SSH into VPN Server using password
       run: |
-        sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@34.123.48.112 << 'EOF'
-          echo "Conectado à VPN Server"
-          EOF
+        sshpass -p 'teste' ssh -o StrictHostKeyChecking=no teste@34.123.48.112 "echo 'Conectado à VPN Server'"
