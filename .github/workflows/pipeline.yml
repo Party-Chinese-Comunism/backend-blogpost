@@ -70,7 +70,8 @@ jobs:
     - name: SSH into VPN Server using password
       run: |
         sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 << 'EOF'
-        sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 "mkdir -p /home/quadros01919/nova_pasta && echo 'Pasta criada no servidor 10.0.1.2!'"
+        sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 "mkdir -p /home/backend/nova_pasta && echo 'Pasta criada no servidor 10.0.1.4!'"
+  
         EOF
 
 
