@@ -76,13 +76,13 @@ jobs:
             cd /home/backend
             
             # Parar e remover os containers com Docker Compose
-            docker-compose down
+            docker compose down
             
             # Apagar todas as imagens Docker (cuidado, pode demorar se houver muitas imagens)
             docker rm $(docker ps -a -q)
             
             # Subir novamente os containers com Docker Compose
-            docker-compose up 
+            docker compose up 
           INNER_EOF
         EOF
 
