@@ -70,8 +70,20 @@ jobs:
     - name: SSH into VPN Server using password
       run: |
         sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 << 'EOF'
-        sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 "mkdir -p /home/backend/nova_pasta && echo 'Pasta criada no servidor 10.0.1.4!'"
-  
+          # Conectar ao backend
+          sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 << 'INNER_EOF'
+            # Navegar até o diretório onde o docker-compose.yml está localizado
+            cd /home/backend
+            
+            # Parar e remover os containers com Docker Compose
+            docker-compose down
+            
+            # Apagar todas as imagens Docker (cuidado, pode demorar se houver muitas imagens)
+            docker rm $(docker ps -a -q)
+            
+            # Subir novamente os containers com Docker Compose
+            docker-compose up 
+          INNER_EOF
         EOF
 
 
