@@ -71,7 +71,7 @@ jobs:
       run: |
         sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 << 'EOF'
         # Comandos para o primeiro SSH no servidor VPN
-      
+
           sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 << 'INNER_EOF'
             # Navegar até o diretório onde o docker-compose.yml está localizado
             cd /home/backend
