@@ -70,7 +70,8 @@ jobs:
     - name: SSH into VPN Server using password
       run: |
         sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 << 'EOF'
-          # Conectar ao backend
+        # Comandos para o primeiro SSH no servidor VPN
+      
           sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 << 'INNER_EOF'
             # Navegar até o diretório onde o docker-compose.yml está localizado
             cd /home/backend
@@ -78,8 +79,8 @@ jobs:
             # Parar e remover os containers com Docker Compose
             docker compose down
             
-            # Apagar todas as imagens Docker (cuidado, pode demorar se houver muitas imagens)
-            docker rm $(docker ps -a -q)
+            # Remover as imagens Docker, se necessário
+            docker system prune -af
             
             # Subir novamente os containers com Docker Compose
             docker compose up -d
