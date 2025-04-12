@@ -53,10 +53,10 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t dogogh1/blog-backend:latest .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest .
 
       - name: Push Docker image
-        run: docker push dogogh1/blog-backend:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest
 
   deploy:
     needs: build-and-push
@@ -69,19 +69,16 @@ jobs:
 
     - name: SSH into VPN Server using password
       run: |
-        sshpass -p 'vmvpn' ssh -o StrictHostKeyChecking=no vmvpn@34.123.48.112 "
-          # Comandos para o primeiro SSH no servidor VPN
-          sshpass -p 'admin' ssh -o StrictHostKeyChecking=no backend@10.0.1.4 '
-            # Navegar até o diretório onde o docker-compose.yml está localizado
-            cd /home/backend
+        sshpass -p '${{ secrets.VM_VPN_PASS }}' ssh -o StrictHostKeyChecking=no ${{ secrets.VM_VPN }} "
+          
+          sshpass -p '${{ secrets.VM_BACK_PASS }}' ssh -o StrictHostKeyChecking=no ${{ secrets.VM_BACK }} '
             
-            # Parar e remover os containers com Docker Compose
+            cd ${{ secrets.VM_PATH }}
+            
             docker compose down
             
-            # Remover as imagens Docker, se necessário
             docker system prune -af
             
-            # Subir novamente os containers com Docker Compose
             docker compose up -d
           '
         "
