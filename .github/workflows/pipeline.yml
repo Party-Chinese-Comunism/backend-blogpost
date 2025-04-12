@@ -69,11 +69,11 @@ jobs:
 
     - name: SSH into VPN Server using password
       run: |
-        sshpass -p '${{ secrets.VM_VPN_PASS }}' ssh -o StrictHostKeyChecking=no ${{ secrets.VM_VPN }} "
+        sshpass -p '${{ secrets.VM_VPN_PASS }}' ssh -o StrictHostKeyChecking=no "${{ secrets.VM_VPN }}" "
           
-          sshpass -p '${{ secrets.VM_BACK_PASS }}' ssh -o StrictHostKeyChecking=no ${{ secrets.VM_BACK }} '
+          sshpass -p '${{ secrets.VM_BACK_PASS }}' ssh -o StrictHostKeyChecking=no "${{ secrets.VM_BACK }}" '
             
-            cd ${{ secrets.VM_PATH }}
+            cd "${{ secrets.VM_PATH }}"
             
             docker compose down
             
