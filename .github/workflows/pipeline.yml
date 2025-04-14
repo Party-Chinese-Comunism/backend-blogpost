@@ -75,10 +75,19 @@ jobs:
             
             cd "${{ secrets.VM_PATH }}"
             
+           
             docker compose down
             
+         
+            docker rm -f backend || true
+            
+           
+            docker network rm backend_default || true
+            
+          
             docker system prune -af
             
+  
             docker compose up -d
           '
         "
