@@ -92,10 +92,9 @@ jobs:
             cd "${{ secrets.VM_PATH }}"
             
             docker compose down
-          
-            docker system prune -af
-            
+            docker images -a | grep backend | awk '{print $3}' | xargs docker rmi -f
             docker compose up -d
+
           '
         "
 
