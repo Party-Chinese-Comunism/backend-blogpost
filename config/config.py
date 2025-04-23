@@ -13,3 +13,9 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secreto")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1) # Define o tempo de vida do token de acesso (minutos)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30) # Define o tempo de vida do token de refresh (dias)
+
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@db/blogdb')
+
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
