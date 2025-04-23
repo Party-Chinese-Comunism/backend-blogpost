@@ -11,20 +11,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: blogdb
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -40,22 +26,13 @@ jobs:
           . venv/bin/activate
           pip install -r requirements.txt
 
-      - name: Run user tests
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost/blogdb
+      - name: Run tests
         run: |
           . venv/bin/activate
-          pytest tests/user_test.py --maxfail=1 --disable-warnings -q
-
-      - name: Run post tests
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost/blogdb
-        run: |
-          . venv/bin/activate
-          pytest tests/comment_test.py --maxfail=1 --disable-warnings -q
+          pytest --maxfail=1 --disable-warnings -q
 
   build-and-push:
-    needs: test 
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -73,31 +50,3 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    
-    steps:
-    - name: Install sshpass
-      run: sudo apt-get update && sudo apt-get install -y sshpass
-
-    - name: SSH into VPN Server using password
-      run: |
-        sshpass -p '${{ secrets.VM_VPN_PASS }}' ssh -o StrictHostKeyChecking=no "${{ secrets.VM_VPN }}" "
-          
-          sshpass -p '${{ secrets.VM_BACK_PASS }}' ssh -o StrictHostKeyChecking=no "${{ secrets.VM_BACK }}" '
-            
-            cd "${{ secrets.VM_PATH }}"
-            
-            docker compose down
-            docker images -a | grep backend | awk '{print $3}' | xargs docker rmi -f
-            docker compose up -d
-
-          '
-        "
-
-
-
-        
