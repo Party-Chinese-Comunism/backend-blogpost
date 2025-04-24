@@ -3,7 +3,7 @@ FROM python:3.12.2-slim
 # Evita cache de bytecode e garante logs imediatos (boa prática para containers)
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_APP=app.py  # Ajuste para o nome correto do seu app principal (ex: app.py ou wsgi.py)
+ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 
 WORKDIR /app
