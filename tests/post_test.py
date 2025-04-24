@@ -97,7 +97,7 @@ def test_save_post_image(app):
             mock_secure_filename.return_value = "test_image.jpg"
             
             upload_folder = "uploads/"
-            os.makedirs(upload_folder, exist_ok=True)
+           # os.makedirs(upload_folder, exist_ok=True)
             
             image_url = PostService.save_post_image(user_id, mock_image)
             
