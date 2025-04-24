@@ -21,11 +21,12 @@ def run_migrations():
         print("[INFO] Migrations aplicadas com sucesso!")
 
 def run_tests():
-    """Executa os testes automatizados antes de iniciar o servidor."""
+    """Executa os testes automatizados com SQLite."""
     import pytest
-    print("[INFO] Aplicando migrations no banco de dados de testes...")
-    with app.app_context():
-        upgrade()  # Aplica as migrations no banco de dados de testes
+    test_app = create_app(testing=True)  # Usa SQLite
+    with test_app.app_context():
+        from app import db
+        db.create_all()  # Cria tabelas no SQLite em memória
     print("[INFO] Executando testes automatizados...")
     pytest.main(["-q", "--disable-warnings", "tests/"])
 
@@ -33,7 +34,7 @@ def main():
     """Ponto de entrada para execução do servidor."""
     # run_tests()
     run_migrations()
-    app.run(debug=True, host=os.getenv("FLASK_RUN_HOST","0.0.0.0"), port=int(os.getenv("FLASK_RUN_PORT", 5000)))
+    app.run(debug=True, host=os.getenv("FLASK_RUN_HOST", "0.0.0.0"), port=int(os.getenv("FLASK_RUN_PORT", 5000)))
 
 if __name__ == "__main__":
     main()
