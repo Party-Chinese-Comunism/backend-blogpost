@@ -26,6 +26,9 @@ jobs:
           . venv/bin/activate
           pip install -r requirements.txt
 
+      - name: Force DATABASE_URL for testing (SQLite)
+        run: echo "DATABASE_URL=sqlite:///:memory:" >> $GITHUB_ENV
+
       - name: Run tests
         run: |
           . venv/bin/activate
