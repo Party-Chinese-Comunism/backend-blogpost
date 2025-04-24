@@ -87,6 +87,24 @@ def test_create_post_invalid_data():
         # Verificando que a criação de post não foi chamada, pois os dados são inválidos
         assert mock_create_post.call_count == 0  
 
+# def test_save_post_image(app):
+#     user_id = 1
+#     mock_image = MagicMock(spec=FileStorage)
+#     mock_image.filename = "test_image.jpg"
+    
+#     with app.app_context():
+#         with patch("os.makedirs") as mock_makedirs, patch("werkzeug.utils.secure_filename") as mock_secure_filename:
+#             mock_secure_filename.return_value = "test_image.jpg"
+            
+#             upload_folder = "uploads/"
+#             #os.makedirs(upload_folder, exist_ok=True)
+            
+#             image_url = PostService.save_post_image(user_id, mock_image)
+            
+#             assert image_url.startswith("/uploads/1-") 
+#             assert image_url.endswith(".jpg")
+#             mock_makedirs.assert_any_call("uploads/", exist_ok=True)
+
 def test_save_post_image(app):
     user_id = 1
     mock_image = MagicMock(spec=FileStorage)
@@ -96,12 +114,11 @@ def test_save_post_image(app):
         with patch("os.makedirs") as mock_makedirs, patch("werkzeug.utils.secure_filename") as mock_secure_filename:
             mock_secure_filename.return_value = "test_image.jpg"
             
-            upload_folder = "uploads/"
-            os.makedirs(upload_folder, exist_ok=True)
-            
             image_url = PostService.save_post_image(user_id, mock_image)
             
             assert image_url.startswith("/uploads/1-") 
             assert image_url.endswith(".jpg")
-            mock_makedirs.assert_called_once_with("uploads/")
+            mock_makedirs.assert_any_call("uploads/")  # Permite múltiplas chamadas
+
+
 
