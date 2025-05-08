@@ -52,10 +52,10 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:staging .
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:staging
 
       - name: del
         run: rm .env
