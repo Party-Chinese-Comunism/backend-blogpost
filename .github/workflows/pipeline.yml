@@ -116,5 +116,4 @@ jobs:
             kubectl patch deployment blog-backend -n backend \
               -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}'
   
-            kubectl rollout restart deployment/blog-backend -n backend
-            kubectl rollout status deployment/blog-backend -n backend 
+            
