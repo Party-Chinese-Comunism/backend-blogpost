@@ -20,7 +20,7 @@ def create_app(testing=False):
     db.init_app(app)
     jwt.init_app(app)
     CORS(app,
-     resources={r"/api/*": {"origins": "https://frontend.34.41.129.29.nip.io"}},
+     resources={r"/api/*": {"origins": "https://frontend.35.231.215.237.nip.io"}},
      supports_credentials=True,
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
