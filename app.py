@@ -19,7 +19,7 @@ def create_app(testing=False):
 
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "https://frontend.35.231.215.237.nip.io"}}, supports_credentials=True)
     migrate.init_app(app, db)
 
     IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
