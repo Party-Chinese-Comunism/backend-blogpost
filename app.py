@@ -5,7 +5,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
 from flask_migrate import Migrate
-
+ 
 db = SQLAlchemy()
 jwt = JWTManager()
 migrate = Migrate()
