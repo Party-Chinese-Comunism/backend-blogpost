@@ -114,7 +114,7 @@ jobs:
               blog-backend=${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
 
             
-            kubectl patch deployment blog-backend -n app \
+            kubectl patch deployment blog-backend -n app \ 
               -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}' 
   
             
