@@ -104,7 +104,7 @@ jobs:
     
         - name: Configure kubectl
           run: |
-            gcloud container clusters get-credentials blog-cluster-east \
+            gcloud container clusters get-credentials cluster-dev \
               --region ${{ secrets.GKE_REGION_DEV }} \
               --project ${{ secrets.GCP_PROJECT_ID }}
     
