@@ -5,7 +5,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
 from flask_migrate import Migrate
-
+ 
 db = SQLAlchemy()
 jwt = JWTManager()
 migrate = Migrate()
@@ -20,10 +20,12 @@ def create_app(testing=False):
     db.init_app(app)
     jwt.init_app(app)
     CORS(app,
-     resources={r"/api/*": {"origins": "https://frontend.35.231.215.237.nip.io"}},
+
+     resources={r"/api/*": {"origins": "https://35.231.215.237.nip.io"}},
      supports_credentials=True,
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
 
     migrate.init_app(app, db)
 
