@@ -110,11 +110,11 @@ jobs:
     
         - name: Deploy to Kubernetes
           run: |
-            kubectl set image deployment/blog-backend -n backend \
+            kubectl set image deployment/blog-backend -n app \
               blog-backend=${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
 
             
-            kubectl patch deployment blog-backend -n backend \
+            kubectl patch deployment blog-backend -n app \
               -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}'
   
             
