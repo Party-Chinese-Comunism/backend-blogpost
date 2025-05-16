@@ -68,7 +68,7 @@ class PostService:
                 "author": UserRepository.get_username_by_id(post.user_id),
                 "author_image": f"{SERVER_IP}/api/user/uploads/profile_pictures/{UserRepository.get_user_profile_image(post.user_id)}" 
                     if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
-                "image_url": f"{SERVER_IP}/api/post{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
+                "image_url": f"{SERVER_IP}/api/posts{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
                 "favorite_number": post.favorites_count(),
                 #  Verifica se o usuário autenticado favoritou esse post
                 "favorited_by_user": PostRepository.is_favorited_by_user(post.id, current_user_id) if current_user_id else False,
