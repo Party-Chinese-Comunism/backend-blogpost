@@ -115,6 +115,6 @@ jobs:
 
             
             kubectl patch deployment blog-backend -n app \
-              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}' 
+              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}'  
   
             
