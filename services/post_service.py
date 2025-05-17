@@ -93,7 +93,7 @@ class PostService:
                 "author": UserRepository.get_username_by_id(post.user_id),
                 "author_image": f"{SERVER_IP}/api/user/uploads/profile_pictures/{UserRepository.get_user_profile_image(post.user_id)}" 
                     if UserRepository.get_user_profile_image(post.user_id) else None,  # Retorna a imagem do autor
-                "image_url": f"{SERVER_IP}/api{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
+                "image_url": f"{SERVER_IP}/api/posts{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
             }
             for post in posts
         ]
