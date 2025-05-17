@@ -105,11 +105,12 @@ jobs:
         - name: Configure kubectl
           run: |
             gcloud container clusters get-credentials cluster-dev \
-              --region ${{ secrets.GKE_REGION }} \
+              --region ${{ secrets.GKE_REGION_DEV }} \
               --project ${{ secrets.GCP_PROJECT_ID }}
     
         - name: Deploy to Kubernetes
           run: |
+        
             kubectl set image deployment/blog-backend -n app \
               blog-backend=${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
 
