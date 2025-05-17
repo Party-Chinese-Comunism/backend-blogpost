@@ -110,7 +110,6 @@ jobs:
     
         - name: Deploy to Kubernetes
           run: |
-            kubectl delete pod -l app=blog-backend -n app --ignore-not-found
         
             kubectl set image deployment/blog-backend -n app \
               blog-backend=${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
