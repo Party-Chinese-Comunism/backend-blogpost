@@ -12,6 +12,8 @@ migrate = Migrate()
 
 def create_app(testing=False):
     app = Flask(__name__)
+    app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Limite de 20MB
+
     if testing:
         app.config.from_object(TestingConfig)
     else:
