@@ -105,7 +105,7 @@ jobs:
         - name: Configure kubectl
           run: |
             gcloud container clusters get-credentials cluster-dev \
-              --region ${{ secrets.GKE_REGION_DEV }} \
+              --region ${{ secrets.GKE_REGION }} \
               --project ${{ secrets.GCP_PROJECT_ID }}
     
         - name: Deploy to Kubernetes
