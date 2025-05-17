@@ -37,25 +37,84 @@ jobs:
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
-
+  
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-        
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necessário para obter o commit hash completo
+  
       - name: env create
         run: echo "${{secrets.ENV}}" > .env
-
+  
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest .
-
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest
-
-      - name: del
+  
+      - name: Get commit SHA
+        id: commit
+        run: echo "SHORT_SHA=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
+  
+      - name: Build and push Docker image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }} \
+            -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest \
+            .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest
+  
+      - name: Cleanup
         run: rm .env
+  deploy:
+      needs: build-and-push
+      runs-on: ubuntu-latest
+      environment: ${{ github.ref }}
+      
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+    
+        - name: Get commit SHA
+          id: commit
+          run: echo "SHORT_SHA=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
+    
+        - id: 'auth'
+          uses: google-github-actions/auth@v2
+          with:
+            credentials_json: ${{ secrets.GCP_SA_KEY }}
+            project_id: ${{ secrets.GCP_PROJECT_ID }}
+    
+        - name: Set up Cloud SDK and kubectl
+          uses: google-github-actions/setup-gcloud@v2
+          with:
+            project_id: ${{ secrets.GCP_PROJECT_ID }}
+            install_components: 'kubectl'
+    
+        - name: Install gke-gcloud-auth-plugin
+          run: |
+            sudo curl -Lo /usr/local/bin/gke-gcloud-auth-plugin \
+              https://storage.googleapis.com/gke-release/gke-gcloud-auth-plugin/linux/amd64/gke-gcloud-auth-plugin
+            sudo chmod +x /usr/local/bin/gke-gcloud-auth-plugin
+            echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
+    
+        - name: Configure kubectl
+          run: |
+            gcloud container clusters get-credentials cluster-dev \
+              --region ${{ secrets.GKE_REGION_DEV }} \
+              --project ${{ secrets.GCP_PROJECT_ID }}
+    
+        - name: Deploy to Kubernetes
+          run: |
+            kubectl set image deployment/blog-backend -n app \
+              blog-backend=${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
+
+            
+            kubectl patch deployment blog-backend -n app \
+              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}' 
+  
+            

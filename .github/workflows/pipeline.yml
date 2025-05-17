@@ -105,7 +105,7 @@ jobs:
         - name: Configure kubectl
           run: |
             gcloud container clusters get-credentials blog-cluster-east \
-              --region ${{ secrets.GKE_REGION_DEV }} \
+              --region ${{ secrets.GKE_REGION }} \
               --project ${{ secrets.GCP_PROJECT_ID }}
     
         - name: Deploy to Kubernetes
@@ -115,6 +115,6 @@ jobs:
 
             
             kubectl patch deployment blog-backend -n app \
-              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}' 
+              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}'  
   
             

@@ -1,5 +1,5 @@
-import socket
-from flask import Blueprint, request, jsonify
+import socket, os
+from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.post_service import PostService
 from repositories.post_repository import PostRepository
@@ -38,6 +38,11 @@ def posts_by_user(user_id):
     """ Retorna todos os posts de um usuário """
     posts = PostService.get_posts_by_user(user_id)
     return jsonify(posts), 200
+
+@post_controller.route('/uploads/<path:filename>')
+def serve_uploaded_file(filename):
+    """Serve qualquer arquivo salvo dentro da pasta /uploads (ex: imagens de perfil, imagens de posts)"""
+    return send_from_directory(os.path.join(current_app.root_path, 'uploads'), filename)
 
 @post_controller.route('/upload-post-image', methods=['POST'])
 @jwt_required()
