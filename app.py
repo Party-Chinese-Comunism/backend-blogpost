@@ -11,7 +11,7 @@ db = SQLAlchemy()
 jwt = JWTManager()
 migrator = Migrate()
 
-def run_migrations(app):
+def run_migrations(app, autogenerate=True):
     """Executa as migrations automaticamente ao iniciar."""
     with app.app_context():
         migrations_folder = os.path.join(os.getcwd(), "migrations")
@@ -21,8 +21,9 @@ def run_migrations(app):
             init()
             stamp()
 
-        print("[INFO] Gerando novas migrations (se necessário)...")
-        run_migrate(message="Automated migration")
+        if autogenerate:
+            print("[INFO] Gerando novas migrations (se necessário)...")
+            run_migrate(message="Automated migration")
 
         print("[INFO] Aplicando migrations ao banco de dados...")
         upgrade()
@@ -76,7 +77,7 @@ def create_app(testing=False):
     app.register_blueprint(user_controller, url_prefix="/api/user")
 
     # Executar migrations automaticamente
-    run_migrations(app)
+    run_migrations(app, autogenerate=not testing)
 
     return app
 
