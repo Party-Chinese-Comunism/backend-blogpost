@@ -1,15 +1,15 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
 from config.config import ProductionConfig, TestingConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-from flask_migrate import Migrate, upgrade, init, migrate, stamp
+from flask_migrate import Migrate, init, migrate as run_migrate, stamp, upgrade
 import os
 
 # Extensões globais
 db = SQLAlchemy()
 jwt = JWTManager()
-migrate = Migrate()
+migrator = Migrate()
 
 def run_migrations(app):
     """Executa as migrations automaticamente ao iniciar."""
@@ -19,10 +19,10 @@ def run_migrations(app):
         if not os.path.exists(migrations_folder):
             print("[INFO] Criando diretório de migrations automaticamente...")
             init()
-            stamp() 
+            stamp()
 
         print("[INFO] Gerando novas migrations (se necessário)...")
-        migrate(message="Automated migration")
+        run_migrate(message="Automated migration")
 
         print("[INFO] Aplicando migrations ao banco de dados...")
         upgrade()
@@ -49,13 +49,13 @@ def create_app(testing=False):
 
     db.init_app(app)
     jwt.init_app(app)
-    migrate.init_app(app, db)
+    migrator.init_app(app, db)
 
     CORS(app,
-        origins=lambda: request.headers.get("Origin"),
-        supports_credentials=True,
-        allow_headers=["Content-Type", "Authorization"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+         origins=lambda: request.headers.get("Origin"),
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
     # Servir imagens da pasta uploads
     IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
@@ -75,6 +75,7 @@ def create_app(testing=False):
     app.register_blueprint(comment_controller, url_prefix="/api/comments")
     app.register_blueprint(user_controller, url_prefix="/api/user")
 
+    # Executar migrations automaticamente
     run_migrations(app)
 
     return app
