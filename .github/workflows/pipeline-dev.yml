@@ -3,7 +3,7 @@ name: Flask CI Workflow
 on:
   push:
     branches:
-      - dev
+      - dev-
   pull_request:
     branches:
       - dev
@@ -86,13 +86,13 @@ jobs:
   #       - id: 'auth'
   #         uses: google-github-actions/auth@v2
   #         with:
-  #           credentials_json: ${{ secrets.GCP_SA_KEY }}
-  #           project_id: ${{ secrets.GCP_PROJECT_ID }}
+  #           credentials_json: ${{ secrets.GCP_SA_KEY_HML }}
+  #           project_id: ${{ secrets.GCP_PROJECT_ID_HML }}
     
   #       - name: Set up Cloud SDK and kubectl
   #         uses: google-github-actions/setup-gcloud@v2
   #         with:
-  #           project_id: ${{ secrets.GCP_PROJECT_ID }}
+  #           project_id: ${{ secrets.GCP_PROJECT_ID_HML }}
   #           install_components: 'kubectl'
     
   #       - name: Install gke-gcloud-auth-plugin
@@ -106,7 +106,7 @@ jobs:
   #         run: |
   #           gcloud container clusters get-credentials cluster-dev \
   #             --region ${{ secrets.GKE_REGION_DEV }} \
-  #             --project ${{ secrets.GCP_PROJECT_ID }}
+  #             --project ${{ secrets.GCP_PROJECT_ID_HML }}
     
   #       - name: Deploy to Kubernetes
   #         run: |
