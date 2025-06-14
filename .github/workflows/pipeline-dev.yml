@@ -61,10 +61,10 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }} \
-            -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest \
+            -t ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:stage \
             .
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:stage
   
       - name: Cleanup
         run: rm .env
@@ -104,7 +104,7 @@ jobs:
     
   #       - name: Configure kubectl
   #         run: |
-  #           gcloud container clusters get-credentials cluster-dev \
+  #           gcloud container clusters get-credentials cluster-hml-central \
   #             --region ${{ secrets.GKE_REGION_DEV }} \
   #             --project ${{ secrets.GCP_PROJECT_ID_HML }}
     
