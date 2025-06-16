@@ -21,13 +21,13 @@ def create_app(testing=False):
 
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app,
-
-     resources={r"/api/*": {"origins": "https://35.231.215.237.nip.io"}},
-     supports_credentials=True,
-     allow_headers=["Content-Type", "Authorization"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
-
+   CORS(
+        app,
+        resources={r"/api/*": {"origins": "*"}},
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    )
 
     migrate.init_app(app, db)
 
