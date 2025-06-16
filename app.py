@@ -52,11 +52,14 @@ def create_app(testing=False):
     jwt.init_app(app)
     migrator.init_app(app, db)
 
-    CORS(app,
-         origins=lambda: request.headers.get("Origin"),
-         supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+    CORS(
+        app,
+        origins=r".*",
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    )
+
 
     # Servir imagens da pasta uploads
     IMAGE_FOLDER = os.path.join(os.getcwd(), "uploads")
