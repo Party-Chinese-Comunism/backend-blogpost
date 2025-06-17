@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 PORT = "5000"
 
-SERVER_IP = f"https://34.121.162.141.nip.io"
+SERVER_IP = f"https://34.148.15.48.nip.io"
 
 
 def allowed_file(filename):
