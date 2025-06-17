@@ -96,4 +96,4 @@ class PostService:
                 "image_url": f"{SERVER_IP}/api/posts{post.image_url}" if post.image_url else None,  # Retorna a imagem do post
             }
             for post in posts
-        ]
+        ] 

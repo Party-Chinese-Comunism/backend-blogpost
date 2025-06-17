@@ -14,7 +14,7 @@ from werkzeug.datastructures import FileStorage
 # Fixture do aplicativo que usa SQLite em memória para os testes
 @pytest.fixture
 def app():
-    app = create_app()
+    app = create_app(testing=True)
 
     # Confirmação de que o banco de dados é SQLite em memória
     print(f"SQLALCHEMY_DATABASE_URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
