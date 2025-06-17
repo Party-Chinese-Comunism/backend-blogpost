@@ -104,17 +104,20 @@ jobs:
     
         - name: Configure kubectl
           run: |
-            gcloud container clusters get-credentials blog-cluster-east \
-              --region ${{ secrets.GKE_REGION_DEV }} \
+            gcloud container clusters get-credentials cluster-prod-central \
+              --region ${{ secrets.GKE_REGION }} \
               --project ${{ secrets.GCP_PROJECT_ID }}
     
         - name: Deploy to Kubernetes
           run: |
+            echo "Deletando pod atual para liberar o PVC (ReadWriteOnce)..."
+            kubectl delete pod -l app=blog-backend -n app --ignore-not-found
+            
             kubectl set image deployment/blog-backend -n app \
               blog-backend=${{ secrets.DOCKER_HUB_USERNAME }}/blog-backend:${{ steps.commit.outputs.SHORT_SHA }}
 
             
             kubectl patch deployment blog-backend -n app \
-              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}' 
+              -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/arch":"amd64"}}}}}'  
   
             

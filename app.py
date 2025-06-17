@@ -52,7 +52,9 @@ def run_tests():
 
 def create_app(testing=False):
     app = Flask(__name__)
+
     app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+
 
     if testing:
         app.config.from_object(TestingConfig)
@@ -61,6 +63,7 @@ def create_app(testing=False):
 
     db.init_app(app)
     jwt.init_app(app)
+
     migrator.init_app(app, db)
 
     CORS(
@@ -70,6 +73,7 @@ def create_app(testing=False):
         allow_headers=["Content-Type", "Authorization"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     )
+
 
 
     # Servir imagens da pasta uploads
