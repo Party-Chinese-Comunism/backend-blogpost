@@ -15,19 +15,30 @@ def run_migrations(app, autogenerate=True):
     """Executa as migrations automaticamente ao iniciar."""
     with app.app_context():
         migrations_folder = os.path.join(os.getcwd(), "migrations")
+        versions_folder = os.path.join(migrations_folder, "versions")
 
         if not os.path.exists(migrations_folder):
-            print("[INFO] Criando diretório de migrations automaticamente...")
+            print("[INFO] Diretório de migrations não existe. Inicializando alembic...")
             init()
+            stamp()
+        elif not os.path.exists(versions_folder) or not os.listdir(versions_folder):
+            print("[INFO] Diretório de versions vazio. Aplicando stamp...")
             stamp()
 
         if autogenerate:
             print("[INFO] Gerando novas migrations (se necessário)...")
-            run_migrate(message="Automated migration")
+            try:
+                run_migrate(message="Automated migration")
+            except Exception as e:
+                print(f"[WARNING] Falha ao gerar migrations: {e}")
 
         print("[INFO] Aplicando migrations ao banco de dados...")
-        upgrade()
-        print("[INFO] Migrations aplicadas com sucesso!")
+        try:
+            upgrade()
+            print("[INFO] Migrations aplicadas com sucesso!")
+        except Exception as e:
+            print(f"[ERROR] Falha ao aplicar migrations: {e}")
+            exit(1)
 
 def run_tests():
     """Executa os testes automatizados com SQLite."""
